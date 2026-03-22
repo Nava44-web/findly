@@ -266,6 +266,55 @@ async function loadProducts() {
 
 loadProducts();
 </script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getFirestore, collection, addDoc } 
+from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
+const firebaseConfig = {
+  apiKey: "AIzaSyAoTFkBa7_LvMCa2JR_nqlxSg6H82sb9rI",
+  authDomain: "findly-app-8bdf6.firebaseapp.com",
+  projectId: "findly-app-8bdf6",
+  storageBucket: "findly-app-8bdf6.firebasestorage.app",
+  messagingSenderId: "71632931005",
+  appId: "1:71632931005:web:f3cdf4eb05082cedb4cfd4"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// 🔥 Viral Products List
+const products = [
+  {img:"https://m.media-amazon.com/images/I/61EXU8BuGZL._SL1500_.jpg", title:"This ₹999 Earbud is going viral 😳", desc:"High-quality wireless earbuds with clear sound", category:"gadgets"},
+  {img:"https://m.media-amazon.com/images/I/71f0sFnE5ML._SL1500_.jpg", title:"Smart Watch Under ₹1500 That Everyone Wants 🔥", desc:"Track your health, steps, and calls", category:"gadgets"},
+  {img:"https://m.media-amazon.com/images/I/71p6R5cH5zL._SL1500_.jpg", title:"LED Desk Lamp That Changes Your Mood 💡", desc:"Touch control, color changing", category:"useful"},
+  {img:"https://m.media-amazon.com/images/I/71xC6XjYQKL._SL1500_.jpg", title:"Foldable Laptop Stand For Work From Home 👌", desc:"Comfortable & portable", category:"useful"},
+  {img:"https://m.media-amazon.com/images/I/81pA5dr2G7L._SL1500_.jpg", title:"Stylish Men’s Sneakers Under ₹1999 👟", desc:"Perfect for casual wear", category:"fashion"},
+  {img:"https://m.media-amazon.com/images/I/71ReC+3v2FL._SL1500_.jpg", title:"Women’s Trendy Handbag That Turns Heads 👜", desc:"Spacious & fashionable", category:"fashion"},
+  {img:"https://m.media-amazon.com/images/I/61f+6a4r32L._SL1500_.jpg", title:"Fast Charging Power Bank 20,000mAh ⚡", desc:"Never run out of battery", category:"gadgets"},
+  {img:"https://m.media-amazon.com/images/I/71iQj2x6aPL._SL1500_.jpg", title:"Magnetic Car Phone Holder 🚗", desc:"Safe & easy navigation", category:"useful"},
+  {img:"https://m.media-amazon.com/images/I/71YB4jv+GQL._SL1500_.jpg", title:"Bluetooth Speaker That Blasts 🔊", desc:"Compact, portable, premium sound", category:"gadgets"},
+  {img:"https://m.media-amazon.com/images/I/71aYxLprTsL._SL1500_.jpg", title:"Multifunctional Kitchen Tool 🍳", desc:"Slice, dice, chop like a pro", category:"useful"},
+  {img:"https://m.media-amazon.com/images/I/71V8xYMygRL._SL1500_.jpg", title:"LED String Lights For Room Decor ✨", desc:"Cozy & Instagram-ready", category:"useful"},
+  {img:"https://m.media-amazon.com/images/I/71rJc2+LjWL._SL1500_.jpg", title:"Trendy Sunglasses For Men & Women 😎", desc:"UV protection + style", category:"fashion"},
+  {img:"https://m.media-amazon.com/images/I/61b0tjG6fWL._SL1500_.jpg", title:"Compact Wireless Mouse For Work 🖱️", desc:"Smooth and ergonomic", category:"gadgets"},
+  {img:"https://m.media-amazon.com/images/I/71x9dJ8xQeL._SL1500_.jpg", title:"Cute Water Bottle With Infuser 💧", desc:"Stay hydrated & stylish", category:"useful"},
+  {img:"https://m.media-amazon.com/images/I/81x3CVn8LAL._SL1500_.jpg", title:"Smart Fitness Band That Motivates 💪", desc:"Track steps, calories, sleep", category:"gadgets"},
+  {img:"https://m.media-amazon.com/images/I/71b+4d6c2FL._SL1500_.jpg", title:"Leather Wallet For Men 👝", desc:"Sleek design, fits everywhere", category:"fashion"},
+  {img:"https://m.media-amazon.com/images/I/71kJpYk3CbL._SL1500_.jpg", title:"Phone Tripod With Remote 📸", desc:"Perfect selfies & reels", category:"gadgets"},
+  {img:"https://m.media-amazon.com/images/I/71r7+CJciWL._SL1500_.jpg", title:"Travel Organizer Bag 🧳", desc:"Keep all essentials neat", category:"useful"},
+  {img:"https://m.media-amazon.com/images/I/71gL5FL0gaL._SL1500_.jpg", title:"Cute Trendy Earrings Set 💎", desc:"Affordable fashion accessory", category:"fashion"},
+  {img:"https://m.media-amazon.com/images/I/71ZoOCEPC2L._SL1500_.jpg", title:"Mini Handheld Vacuum Cleaner 🧹", desc:"Clean car or desk easily", category:"useful"}
+];
+
+// 🔥 Upload all products automatically
+(async () => {
+  for(const p of products){
+    await addDoc(collection(db, "products"), p);
+    console.log("Added:", p.title);
+  }
+  alert("All viral products added ✅ Refresh your site!");
+})();
+</script>
 </body>
 </html>

@@ -20,6 +20,7 @@ header {
   padding:15px 20px;
   background:white;
   box-shadow:0 2px 5px rgba(0,0,0,0.05);
+  flex-wrap:wrap;
 }
 
 .logo {
@@ -29,6 +30,19 @@ header {
 
 .logo span {
   color:#ff3d00;
+}
+
+header nav {
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+}
+
+header nav input[type="text"] {
+  padding:6px 10px;
+  margin-right:10px;
+  border-radius:20px;
+  border:1px solid #ddd;
 }
 
 button {
@@ -44,7 +58,7 @@ button {
 /* HERO */
 .hero {
   text-align:center;
-  padding:40px 20px;
+  padding:30px 20px;
 }
 
 .hero h2 {
@@ -62,7 +76,6 @@ button {
   margin-bottom:20px;
 }
 
-/* FORM */
 #formBox {
   display:none;
   padding:15px;
@@ -72,7 +85,7 @@ button {
   box-shadow:0 3px 10px rgba(0,0,0,0.05);
 }
 
-input {
+input, select {
   width:100%;
   padding:10px;
   margin:6px 0;
@@ -80,18 +93,15 @@ input {
   border-radius:8px;
 }
 
-/* PRODUCTS GRID */
 .products {
-  column-count: 3;
-  column-gap: 15px;
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:15px;
   padding:20px;
 }
 
 .card {
-  display:inline-block;
   background:white;
-  margin-bottom:15px;
-  width:100%;
   border-radius:12px;
   overflow:hidden;
   box-shadow:0 3px 10px rgba(0,0,0,0.05);
@@ -104,6 +114,8 @@ input {
 
 .card img {
   width:100%;
+  height:220px;
+  object-fit:cover;
 }
 
 .card-content {
@@ -142,6 +154,21 @@ input {
   font-size:12px;
   font-weight:600;
 }
+
+/* LOAD MORE BUTTON */
+#loadMoreBtn {
+  display:block;
+  margin:20px auto;
+  padding:10px 20px;
+}
+
+/* RESPONSIVE */
+@media(max-width:600px){
+  header nav input[type="text"]{
+    width:100%;
+    margin:5px 0;
+  }
+}
 </style>
 </head>
 
@@ -149,7 +176,10 @@ input {
 
 <header>
   <div class="logo">Find<span>ly 🔥</span></div>
-  <button onclick="toggleForm()">+ Add Product</button>
+  <nav>
+    <input type="text" id="searchInput" placeholder="Search products..." oninput="searchProducts()">
+    <button onclick="toggleForm()">+ Add Product</button>
+  </nav>
 </header>
 
 <div class="hero">
@@ -157,7 +187,6 @@ input {
   <p>Discover trending items before everyone else</p>
 </div>
 
-<!-- CATEGORY BUTTONS -->
 <div id="categories">
   <button onclick="filterCategory('all')">🔥 All</button>
   <button onclick="filterCategory('gadgets')">📱 Gadgets</button>
@@ -165,23 +194,25 @@ input {
   <button onclick="filterCategory('useful')">💡 Useful</button>
 </div>
 
-<!-- ADD PRODUCT FORM -->
 <div id="formBox">
   <input id="img" placeholder="Image URL">
   <input id="title" placeholder="Product Title">
   <input id="desc" placeholder="Description">
-  <input id="link" placeholder="Affiliate Link">
-  <input id="category" placeholder="Category (gadgets/fashion/useful)">
+  <input id="link" placeholder="Affiliate Link (Amazon/Flipkart)">
+  <select id="category">
+    <option value="gadgets">Gadgets</option>
+    <option value="fashion">Fashion</option>
+    <option value="useful">Useful</option>
+  </select>
   <button onclick="addProduct()">Add Product</button>
 </div>
 
-<!-- PRODUCTS -->
 <div class="products" id="products"></div>
+<button id="loadMoreBtn" onclick="loadMore()">Load More</button>
 
-<!-- FIREBASE & AUTO LOAD VIRAL PRODUCTS -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs, query } 
+import { getFirestore, collection, addDoc, getDocs } 
 from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -196,85 +227,48 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+let allProducts = [];
+let displayedCount = 0;
+const perLoad = 8;
 let currentCategory = 'all';
 
-// TOGGLE FORM
-window.toggleForm = function() {
-  let f = document.getElementById("formBox");
-  f.style.display = f.style.display === "none" ? "block" : "none";
-};
-
-// ADD PRODUCT (manual)
-window.addProduct = async function () {
-  let img = document.getElementById("img").value;
-  let title = document.getElementById("title").value;
-  let desc = document.getElementById("desc").value;
-  let link = document.getElementById("link").value;
-  let category = document.getElementById("category").value || "other";
-
-  if(!img || !title || !link){
-    alert("Please fill required fields");
-    return;
-  }
-
-  await addDoc(collection(db, "products"), {
-    img, title, desc, link, category
-  });
-
-  alert("Product Added ✅");
-
-  document.getElementById("formBox").style.display = "none";
-
-  loadProducts();
-};
-
-// FILTER CATEGORY
-window.filterCategory = function(cat){
-  currentCategory = cat;
-  loadProducts();
-}
-
-// 🔥 Viral Products List (Corrected)
-const viralProducts = [
-  {img:"https://m.media-amazon.com/images/I/61EXU8BuGZL._SL1500_.jpg", title:"This ₹999 Earbud is going viral 😳", desc:"High-quality wireless earbuds with clear sound", category:"gadgets"},
-  {img:"https://m.media-amazon.com/images/I/71f0sFnE5ML._SL1500_.jpg", title:"Smart Watch Under ₹1500 That Everyone Wants 🔥", desc:"Track your health, steps, and calls", category:"gadgets"},
-  {img:"https://m.media-amazon.com/images/I/71p6R5cH5zL._SL1500_.jpg", title:"LED Desk Lamp That Changes Your Mood 💡", desc:"Touch control, color changing", category:"useful"},
-  {img:"https://m.media-amazon.com/images/I/71xC6XjYQKL._SL1500_.jpg", title:"Foldable Laptop Stand For Work From Home 👌", desc:"Comfortable & portable", category:"useful"},
-  {img:"https://m.media-amazon.com/images/I/81pA5dr2G7L._SL1500_.jpg", title:"Stylish Men’s Sneakers Under ₹1999 👟", desc:"Perfect for casual wear", category:"fashion"},
-  {img:"https://m.media-amazon.com/images/I/71ReC+3v2FL._SL1500_.jpg", title:"Women’s Trendy Handbag That Turns Heads 👜", desc:"Spacious & fashionable", category:"fashion"},
-  {img:"https://m.media-amazon.com/images/I/61f+6a4r32L._SL1500_.jpg", title:"Fast Charging Power Bank 20,000mAh ⚡", desc:"Never run out of battery", category:"gadgets"},
-  {img:"https://m.media-amazon.com/images/I/71iQj2x6aPL._SL1500_.jpg", title:"Magnetic Car Phone Holder 🚗", desc:"Safe & easy navigation", category:"useful"},
-  {img:"https://m.media-amazon.com/images/I/71YB4jv+GQL._SL1500_.jpg", title:"Bluetooth Speaker That Blasts 🔊", desc:"Compact, portable, premium sound", category:"gadgets"},
-  {img:"https://m.media-amazon.com/images/I/71aYxLprTsL._SL1500_.jpg", title:"Multifunctional Kitchen Tool 🍳", desc:"Slice, dice, chop like a pro", category:"useful"},
-  {img:"https://m.media-amazon.com/images/I/71V8xYMygRL._SL1500_.jpg", title:"LED String Lights For Room Decor ✨", desc:"Cozy & Instagram-ready", category:"useful"},
-  {img:"https://m.media-amazon.com/images/I/71rJc2+LjWL._SL1500_.jpg", title:"Trendy Sunglasses For Men & Women 😎", desc:"UV protection + style", category:"fashion"},
-  {img:"https://m.media-amazon.com/images/I/61b0tjG6fWL._SL1500_.jpg", title:"Compact Wireless Mouse For Work 🖱️", desc:"Smooth and ergonomic", category:"gadgets"},
-  {img:"https://m.media-amazon.com/images/I/71x9dJ8xQeL._SL1500_.jpg", title:"Cute Water Bottle With Infuser 💧", desc:"Stay hydrated & stylish", category:"useful"},
-  {img:"https://m.media-amazon.com/images/I/81x3CVn8LAL._SL1500_.jpg", title:"Smart Fitness Band That Motivates 💪", desc:"Track steps, calories, sleep", category:"gadgets"},
-  {img:"https://m.media-amazon.com/images/I/71b+4d6c2FL._SL1500_.jpg", title:"Leather Wallet For Men 👝", desc:"Sleek design, fits everywhere", category:"fashion"},
-  {img:"https://m.media-amazon.com/images/I/71kJpYk3CbL._SL1500_.jpg", title:"Phone Tripod With Remote 📸", desc:"Perfect selfies & reels", category:"gadgets"},
-  {img:"https://m.media-amazon.com/images/I/71r7+CJciWL._SL1500_.jpg", title:"Travel Organizer Bag 🧳", desc:"Keep all essentials neat", category:"useful"},
-  {img:"https://m.media-amazon.com/images/I/71gL5FL0gaL._SL1500_.jpg", title:"Cute Trendy Earrings Set 💎", desc:"Affordable fashion accessory", category:"fashion"},
-  {img:"https://m.media-amazon.com/images/I/71ZoOCEPC2L._SL1500_.jpg", title:"Mini Handheld Vacuum Cleaner 🧹", desc:"Clean car or desk easily", category:"useful"}
-];
-
-// AUTO-ADD VIRAL PRODUCTS (once)
 async function addViralProducts() {
   const existing = await getDocs(collection(db, "products"));
-  if(existing.size > 0) return; // prevent duplicates
+  if(existing.size > 0) return;
+
+  const viralProducts = [
+    {img:"https://m.media-amazon.com/images/I/61EXU8BuGZL._SL1500_.jpg", title:"This ₹999 Earbud is going viral 😳", desc:"High-quality wireless earbuds with clear sound", category:"gadgets", link:"https://amzn.to/3E1Earbud"},
+    {img:"https://m.media-amazon.com/images/I/71f0sFnE5ML._SL1500_.jpg", title:"Smart Watch Under ₹1500 That Everyone Wants 🔥", desc:"Track your health, steps, and calls", category:"gadgets", link:"https://amzn.to/3E1Watch"},
+    {img:"https://m.media-amazon.com/images/I/71p6R5cH5zL._SL1500_.jpg", title:"LED Desk Lamp That Changes Your Mood 💡", desc:"Touch control, color changing", category:"useful", link:"https://amzn.to/3ELamp"},
+    {img:"https://m.media-amazon.com/images/I/71xC6XjYQKL._SL1500_.jpg", title:"Foldable Laptop Stand For Work From Home 👌", desc:"Comfortable & portable", category:"useful", link:"https://amzn.to/3EStand"},
+    {img:"https://m.media-amazon.com/images/I/81pA5dr2G7L._SL1500_.jpg", title:"Stylish Men’s Sneakers Under ₹1999 👟", desc:"Perfect for casual wear", category:"fashion", link:"https://amzn.to/3ESneakers"},
+    {img:"https://m.media-amazon.com/images/I/71ReC+3v2FL._SL1500_.jpg", title:"Women’s Trendy Handbag That Turns Heads 👜", desc:"Spacious & fashionable", category:"fashion", link:"https://amzn.to/3EHandbag"},
+    {img:"https://m.media-amazon.com/images/I/61f+6a4r32L._SL1500_.jpg", title:"Fast Charging Power Bank 20,000mAh ⚡", desc:"Never run out of battery", category:"gadgets", link:"https://amzn.to/3EPower"},
+    {img:"https://m.media-amazon.com/images/I/71iQj2x6aPL._SL1500_.jpg", title:"Magnetic Car Phone Holder 🚗", desc:"Safe & easy navigation", category:"useful", link:"https://amzn.to/3EHolder"},
+    {img:"https://m.media-amazon.com/images/I/71YB4jv+GQL._SL1500_.jpg", title:"Bluetooth Speaker That Blasts 🔊", desc:"Compact, portable, premium sound", category:"gadgets", link:"https://amzn.to/3ESpeaker"},
+    {img:"https://m.media-amazon.com/images/I/71aYxLprTsL._SL1500_.jpg", title:"Multifunctional Kitchen Tool 🍳", desc:"Slice, dice, chop like a pro", category:"useful", link:"https://amzn.to/3EKitchen"},
+  ];
+
   for(const p of viralProducts){
     await addDoc(collection(db, "products"), p);
   }
 }
 
-// LOAD PRODUCTS
 async function loadProducts() {
   const container = document.getElementById("products");
+  if(allProducts.length === 0){
+    const snapshot = await getDocs(collection(db, "products"));
+    allProducts = snapshot.docs.map(doc => doc.data());
+  }
   container.innerHTML = "";
-  const snapshot = await getDocs(collection(db, "products"));
-  snapshot.forEach((doc) => {
-    const p = doc.data();
-    if(currentCategory !== 'all' && p.category !== currentCategory) return;
+  displayedCount = 0;
+  loadMore();
+}
+
+function displayProducts(items){
+  const container = document.getElementById("products");
+  for(const p of items){
+    if(currentCategory !== 'all' && p.category !== currentCategory) continue;
     const score = (Math.random() * 2 + 8).toFixed(1);
     container.innerHTML += `
       <div class="card">
@@ -288,13 +282,59 @@ async function loadProducts() {
         </div>
       </div>
     `;
-  });
+  }
 }
 
-// RUN ON PAGE LOAD
+function loadMore(){
+  const nextItems = allProducts.slice(displayedCount, displayedCount + perLoad);
+  displayProducts(nextItems);
+  displayedCount += perLoad;
+  if(displayedCount >= allProducts.length){
+    document.getElementById("loadMoreBtn").style.display = "none";
+  } else {
+    document.getElementById("loadMoreBtn").style.display = "block";
+  }
+}
+
+window.toggleForm = function(){
+  const f = document.getElementById("formBox");
+  f.style.display = f.style.display === "none" ? "block" : "none";
+}
+
+window.addProduct = async function(){
+  const img = document.getElementById("img").value;
+  const title = document.getElementById("title").value;
+  const desc = document.getElementById("desc").value;
+  const link = document.getElementById("link").value;
+  const category = document.getElementById("category").value;
+
+  if(!img || !title || !link){
+    alert("Please fill required fields");
+    return;
+  }
+
+  await addDoc(collection(db, "products"), {img,title,desc,link,category});
+  allProducts.push({img,title,desc,link,category});
+  loadProducts();
+  document.getElementById("formBox").style.display = "none";
+}
+
+window.filterCategory = function(cat){
+  currentCategory = cat;
+  loadProducts();
+}
+
+window.searchProducts = function(){
+  const term = document.getElementById("searchInput").value.toLowerCase();
+  const filtered = allProducts.filter(p=>p.title.toLowerCase().includes(term) || (p.desc && p.desc.toLowerCase().includes(term)));
+  document.getElementById("products").innerHTML = "";
+  displayProducts(filtered);
+}
+
 await addViralProducts();
 loadProducts();
 
 </script>
+
 </body>
 </html>

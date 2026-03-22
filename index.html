@@ -22,24 +22,26 @@ nav button{background:linear-gradient(45deg,#ff3d00,#ff9900);color:white;border:
 #formBox{display:none;padding:15px;margin:20px auto;background:white;border-radius:15px;box-shadow:0 5px 15px rgba(0,0,0,0.1);width:90%;max-width:400px;}
 #formBox input,#formBox select{width:100%;padding:10px;margin:8px 0;border:1px solid #ddd;border-radius:12px;}
 #formBox button{width:100%;padding:12px;background:linear-gradient(45deg,#ff3d00,#ff9900);color:white;border:none;border-radius:25px;margin-top:10px;font-weight:600;}
-.products{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:15px;padding:20px;}
-.card{background:white;border-radius:15px;overflow:hidden;box-shadow:0 5px 15px rgba(0,0,0,0.08);transition:0.3s;position:relative;}
-.card:hover{transform:translateY(-7px);box-shadow:0 10px 20px rgba(0,0,0,0.15);}
-.card img{width:100%;height:160px;object-fit:cover;background:#f0f0f0;}
-.card-content{padding:12px;}
+.products{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:15px;padding:20px;}
+.card{background:white;border-radius:15px;overflow:hidden;box-shadow:0 5px 15px rgba(0,0,0,0.08);transition:0.3s;position:relative;display:flex;flex-direction:column;}
+.card:hover{transform:translateY(-5px);box-shadow:0 10px 20px rgba(0,0,0,0.15);}
+.card img{width:100%;height:140px;object-fit:cover;background:#f0f0f0;border-bottom:1px solid #eee;}
+.card-content{padding:12px;flex:1;display:flex;flex-direction:column;}
 .title{font-weight:700;font-size:15px;color:#333;}
-.desc{color:#666;font-size:13px;margin:5px 0;}
+.desc{color:#666;font-size:13px;margin:5px 0;flex:1;}
 .btn{display:block;text-align:center;background:linear-gradient(45deg,#ff3d00,#ff9900);color:white;padding:10px;border-radius:25px;font-weight:600;margin-top:10px;transition:0.3s;}
 .btn:hover{opacity:0.9;}
-.score{color:#ff3d00;font-size:12px;margin-top:5px;animation:countup 1s;}
-@keyframes countup{0%{opacity:0;transform:translateY(10px);}100%{opacity:1;transform:translateY(0);}}
 .ai-pick{color:#00aa00;font-size:12px;font-weight:600;margin-top:2px;}
 .new-badge{position:absolute;top:10px;left:10px;background:linear-gradient(45deg,#ff3d00,#ff9900);color:white;padding:3px 8px;font-size:10px;font-weight:700;border-radius:12px;}
 #loadMoreBtn{display:block;margin:25px auto;padding:12px 25px;border:none;border-radius:25px;background:linear-gradient(45deg,#ff3d00,#ff9900);color:white;font-weight:600;transition:0.3s;}
 #loadMoreBtn:hover{opacity:0.9;}
-@media(max-width:600px){
-  nav input[type="text"]{width:90%;}
+@media(max-width:768px){
+  .products{grid-template-columns:repeat(auto-fit,minmax(140px,1fr));}
   .card img{height:120px;}
+}
+@media(max-width:480px){
+  .products{grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px;}
+  .card img{height:100px;}
 }
 </style>
 </head>
@@ -54,8 +56,8 @@ nav button{background:linear-gradient(45deg,#ff3d00,#ff9900);color:white;border:
 </header>
 
 <div class="hero">
-  <h2>Discover Viral Products Before Everyone Else 🔥</h2>
-  <p>Trending gadgets, fashion & useful items picked by AI</p>
+  <h2>Add & Discover Products Effortlessly 🔥</h2>
+  <p>Start with your own products. AI picks & trending scores auto update.</p>
 </div>
 
 <div id="categories">
@@ -83,7 +85,7 @@ nav button{background:linear-gradient(45deg,#ff3d00,#ff9900);color:white;border:
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getFirestore, collection, addDoc, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAoTFkBa7_LvMCa2JR_nqlxSg6H82sb9rI",
@@ -103,36 +105,11 @@ const perLoad = 8;
 let currentCategory = 'all';
 const placeholderImg = "https://via.placeholder.com/300x220?text=No+Image";
 
-// AUTO-ADD DEFAULT VIRAL PRODUCTS ONLY ONCE
-async function addViralProductsOnce() {
-  const snapshot = await getDocs(collection(db, "products"));
-  if(snapshot.size > 0) return;
-
-  const viralProducts = [
-    {img:"https://m.media-amazon.com/images/I/61EXU8BuGZL._SL1500_.jpg", title:"₹999 Earbuds 😳", desc:"High-quality wireless earbuds", category:"gadgets", link:"https://amzn.to/3E1Earbud"},
-    {img:"https://m.media-amazon.com/images/I/71f0sFnE5ML._SL1500_.jpg", title:"Smart Watch Under ₹1500 🔥", desc:"Track steps & calls", category:"gadgets", link:"https://amzn.to/3E1Watch"},
-    {img:"https://m.media-amazon.com/images/I/71p6R5cH5zL._SL1500_.jpg", title:"LED Desk Lamp 💡", desc:"Touch control, color changing", category:"useful", link:"https://amzn.to/3ELamp"},
-    {img:"https://m.media-amazon.com/images/I/71xC6XjYQKL._SL1500_.jpg", title:"Foldable Laptop Stand 👌", desc:"Comfortable & portable", category:"useful", link:"https://amzn.to/3EStand"},
-    {img:"https://m.media-amazon.com/images/I/81pA5dr2G7L._SL1500_.jpg", title:"Stylish Sneakers 👟", desc:"Casual wear", category:"fashion", link:"https://amzn.to/3ESneakers"},
-    {img:"https://m.media-amazon.com/images/I/71ReC+3v2FL._SL1500_.jpg", title:"Trendy Handbag 👜", desc:"Spacious & fashionable", category:"fashion", link:"https://amzn.to/3EHandbag"},
-    {img:"https://m.media-amazon.com/images/I/61f+6a4r32L._SL1500_.jpg", title:"Fast Charging Power Bank ⚡", desc:"Never run out of battery", category:"gadgets", link:"https://amzn.to/3EPower"},
-    {img:"https://m.media-amazon.com/images/I/71iQj2x6aPL._SL1500_.jpg", title:"Car Phone Holder 🚗", desc:"Safe & easy navigation", category:"useful", link:"https://amzn.to/3EHolder"},
-    {img:"https://m.media-amazon.com/images/I/71YB4jv+GQL._SL1500_.jpg", title:"Bluetooth Speaker 🔊", desc:"Portable premium sound", category:"gadgets", link:"https://amzn.to/3ESpeaker"},
-    {img:"https://m.media-amazon.com/images/I/71aYxLprTsL._SL1500_.jpg", title:"Kitchen Tool 🍳", desc:"Slice, dice, chop", category:"useful", link:"https://amzn.to/3EKitchen"}
-  ];
-
-  for(const p of viralProducts){
-    await addDoc(collection(db, "products"), {...p, addedAt: serverTimestamp()});
-  }
-}
-
 // LOAD PRODUCTS
 async function loadProducts() {
   const container = document.getElementById("products");
-  if(allProducts.length===0){
-    const snapshot = await getDocs(collection(db, "products"));
-    allProducts = snapshot.docs.map(doc=>({...doc.data(), id:doc.id}));
-  }
+  const snapshot = await getDocs(collection(db, "products"));
+  allProducts = snapshot.docs.map(doc=>({...doc.data(), id:doc.id}));
   container.innerHTML="";
   displayedCount=0;
   loadMore();
@@ -144,10 +121,8 @@ function displayProducts(items){
     if(currentCategory!=='all' && p.category!==currentCategory) return;
     const score=(Math.random()*2+8).toFixed(1);
     const imgUrl=p.img&&p.img.length>0?p.img:placeholderImg;
-    const isNew = p.addedAt ? new Date(p.addedAt.seconds*1000).toDateString() === new Date().toDateString() : false;
     container.innerHTML+=`
       <div class="card">
-        ${isNew?'<div class="new-badge">🌟 New</div>':''}
         <img src="${imgUrl}" loading="lazy">
         <div class="card-content">
           <div class="title">${p.title}</div>
@@ -182,7 +157,6 @@ window.addProduct=async function(){
   const category=document.getElementById("category").value;
   if(!img||!title||!link){alert("Please fill required fields");return;}
   await addDoc(collection(db,"products"),{img,title,desc,link,category,addedAt:serverTimestamp()});
-  allProducts.push({img,title,desc,link,category,addedAt:{seconds:Math.floor(Date.now()/1000)}});
   loadProducts();
   document.getElementById("formBox").style.display="none";
 }
@@ -199,14 +173,7 @@ window.searchProducts=function(){
   displayProducts(filtered);
 }
 
-// AUTO LOAD MORE ON SCROLL
-window.addEventListener('scroll',()=>{
-  const bottom=(window.innerHeight + window.scrollY) >= document.body.offsetHeight-100;
-  if(bottom){loadMore();}
-});
-
 // INIT
-await addViralProductsOnce();
 loadProducts();
 </script>
 </body>

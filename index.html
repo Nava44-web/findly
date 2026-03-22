@@ -178,10 +178,10 @@ input {
 <!-- PRODUCTS -->
 <div class="products" id="products"></div>
 
-<!-- FIREBASE -->
+<!-- FIREBASE & AUTO LOAD VIRAL PRODUCTS -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs } 
+import { getFirestore, collection, addDoc, getDocs, query } 
 from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -204,7 +204,7 @@ window.toggleForm = function() {
   f.style.display = f.style.display === "none" ? "block" : "none";
 };
 
-// ADD PRODUCT
+// ADD PRODUCT (manual)
 window.addProduct = async function () {
   let img = document.getElementById("img").value;
   let title = document.getElementById("title").value;
@@ -234,57 +234,8 @@ window.filterCategory = function(cat){
   loadProducts();
 }
 
-// LOAD PRODUCTS
-async function loadProducts() {
-  document.getElementById("products").innerHTML = "";
-
-  const querySnapshot = await getDocs(collection(db, "products"));
-
-  querySnapshot.forEach((doc) => {
-    let p = doc.data();
-
-    if(currentCategory !== 'all' && p.category !== currentCategory) return;
-
-    let score = (Math.random() * 2 + 8).toFixed(1); // Trending score
-
-    let html = `
-    <div class="card">
-      <img src="${p.img}">
-      <div class="card-content">
-        <div class="title">${p.title}</div>
-        <div class="desc">${p.desc || ""}</div>
-        <div class="ai-pick">⚡ AI Pick</div>
-        <div class="score">🔥 Trending Score: ${score}</div>
-        <a href="${p.link}" class="btn">Buy Now</a>
-      </div>
-    </div>
-    `;
-
-    document.getElementById("products").innerHTML += html;
-  });
-}
-
-loadProducts();
-</script>
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getFirestore, collection, addDoc } 
-from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyAoTFkBa7_LvMCa2JR_nqlxSg6H82sb9rI",
-  authDomain: "findly-app-8bdf6.firebaseapp.com",
-  projectId: "findly-app-8bdf6",
-  storageBucket: "findly-app-8bdf6.firebasestorage.app",
-  messagingSenderId: "71632931005",
-  appId: "1:71632931005:web:f3cdf4eb05082cedb4cfd4"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-// 🔥 Viral Products List
-const products = [
+// 🔥 Viral Products List (Corrected)
+const viralProducts = [
   {img:"https://m.media-amazon.com/images/I/61EXU8BuGZL._SL1500_.jpg", title:"This ₹999 Earbud is going viral 😳", desc:"High-quality wireless earbuds with clear sound", category:"gadgets"},
   {img:"https://m.media-amazon.com/images/I/71f0sFnE5ML._SL1500_.jpg", title:"Smart Watch Under ₹1500 That Everyone Wants 🔥", desc:"Track your health, steps, and calls", category:"gadgets"},
   {img:"https://m.media-amazon.com/images/I/71p6R5cH5zL._SL1500_.jpg", title:"LED Desk Lamp That Changes Your Mood 💡", desc:"Touch control, color changing", category:"useful"},
@@ -307,14 +258,43 @@ const products = [
   {img:"https://m.media-amazon.com/images/I/71ZoOCEPC2L._SL1500_.jpg", title:"Mini Handheld Vacuum Cleaner 🧹", desc:"Clean car or desk easily", category:"useful"}
 ];
 
-// 🔥 Upload all products automatically
-(async () => {
-  for(const p of products){
+// AUTO-ADD VIRAL PRODUCTS (once)
+async function addViralProducts() {
+  const existing = await getDocs(collection(db, "products"));
+  if(existing.size > 0) return; // prevent duplicates
+  for(const p of viralProducts){
     await addDoc(collection(db, "products"), p);
-    console.log("Added:", p.title);
   }
-  alert("All viral products added ✅ Refresh your site!");
-})();
+}
+
+// LOAD PRODUCTS
+async function loadProducts() {
+  const container = document.getElementById("products");
+  container.innerHTML = "";
+  const snapshot = await getDocs(collection(db, "products"));
+  snapshot.forEach((doc) => {
+    const p = doc.data();
+    if(currentCategory !== 'all' && p.category !== currentCategory) return;
+    const score = (Math.random() * 2 + 8).toFixed(1);
+    container.innerHTML += `
+      <div class="card">
+        <img src="${p.img}">
+        <div class="card-content">
+          <div class="title">${p.title}</div>
+          <div class="desc">${p.desc || ""}</div>
+          <div class="ai-pick">⚡ AI Pick</div>
+          <div class="score">🔥 Trending Score: ${score}</div>
+          <a href="${p.link || '#'}" class="btn" target="_blank">Buy Now</a>
+        </div>
+      </div>
+    `;
+  });
+}
+
+// RUN ON PAGE LOAD
+await addViralProducts();
+loadProducts();
+
 </script>
 </body>
 </html>

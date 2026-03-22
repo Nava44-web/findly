@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Findly 🔥</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body{margin:0;font-family:'Segoe UI',sans-serif;background:#f9f9f9;}
+a{text-decoration:none;}
+button{cursor:pointer;transition:0.3s;outline:none;}
+header{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;padding:15px 20px;background:white;box-shadow:0 2px 8px rgba(0,0,0,0.08);}
+.logo{font-size:24px;font-weight:700;color:#ff3d00;}
+nav{display:flex;flex:1;justify-content:center;align-items:center;gap:10px;flex-wrap:wrap;}
+nav input[type="text"]{padding:8px 15px;border-radius:25px;border:1px solid #ddd;width:50%;min-width:200px;}
+nav button{background:linear-gradient(45deg,#ff3d00,#ff9900);color:white;border:none;padding:8px 20px;border-radius:25px;font-weight:600;}
+.hero{text-align:center;padding:30px 15px;background:linear-gradient(135deg,#fff1e6,#ffe6cc);border-bottom:2px solid #ffd9b3;}
+.hero h2{font-size:28px;margin-bottom:10px;color:#ff3d00;}
+.hero p{color:#555;font-size:16px;}
+#categories{text-align:center;margin:20px 0;}
+#categories button{margin:5px;padding:8px 14px;border-radius:25px;border:none;background:linear-gradient(45deg,#ffd699,#ff6600);color:white;font-weight:600;}
+#categories button:hover{background:linear-gradient(45deg,#ff3d00,#ff9900);}
+#formBox{display:none;padding:15px;margin:20px auto;background:white;border-radius:15px;box-shadow:0 5px 15px rgba(0,0,0,0.1);width:90%;max-width:400px;}
+#formBox input,#formBox select{width:100%;padding:10px;margin:8px 0;border:1px solid #ddd;border-radius:12px;}
+#formBox button{width:100%;padding:12px;background:linear-gradient(45deg,#ff3d00,#ff9900);color:white;border:none;border-radius:25px;margin-top:10px;font-weight:600;}
+.products{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px;padding:20px;}
+.card{background:white;border-radius:15px;overflow:hidden;box-shadow:0 5px 15px rgba(0,0,0,0.08);transition:0.3s;position:relative;}
+.card:hover{transform:translateY(-7px);box-shadow:0 10px 20px rgba(0,0,0,0.15);}
+.card img{width:100%;height:220px;object-fit:cover;background:#f0f0f0;}
+.card-content{padding:12px;}
+.title{font-weight:700;font-size:15px;color:#333;}
+.desc{color:#666;font-size:13px;margin:5px 0;}
+.btn{display:block;text-align:center;background:linear-gradient(45deg,#ff3d00,#ff9900);color:white;padding:10px;border-radius:25px;font-weight:600;margin-top:10px;transition:0.3s;}
+.btn:hover{opacity:0.9;}
+.score{color:#ff3d00;font-size:12px;margin-top:5px;animation:countup 1s;}
+@keyframes countup{0%{opacity:0;transform:translateY(10px);}100%{opacity:1;transform:translateY(0);}}
+.ai-pick{color:#00aa00;font-size:12px;font-weight:600;margin-top:2px;}
+.new-badge{position:absolute;top:10px;left:10px;background:linear-gradient(45deg,#ff3d00,#ff9900);color:white;padding:3px 8px;font-size:10px;font-weight:700;border-radius:12px;}
+#loadMoreBtn{display:block;margin:25px auto;padding:12px 25px;border:none;border-radius:25px;background:linear-gradient(45deg,#ff3d00,#ff9900);color:white;font-weight:600;transition:0.3s;}
+#loadMoreBtn:hover{opacity:0.9;}
+@media(max-width:600px){
+  nav input[type="text"]{width:90%;}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Findly 🔥</div>
+  <nav>
+    <input type="text" id="searchInput" placeholder="Search products..." oninput="searchProducts()">
+    <button onclick="toggleForm()">+ Add Product</button>
+  </nav>
+</header>
+
+<div class="hero">
+  <h2>Discover Viral Products Before Everyone Else 🔥</h2>
+  <p>Trending gadgets, fashion & useful items picked by AI</p>
+</div>
+
+<div id="categories">
+  <button onclick="filterCategory('all')">🔥 All</button>
+  <button onclick="filterCategory('gadgets')">📱 Gadgets</button>
+  <button onclick="filterCategory('fashion')">👕 Fashion</button>
+  <button onclick="filterCategory('useful')">💡 Useful</button>
+</div>
+
+<div id="formBox">
+  <input id="img" placeholder="Image URL">
+  <input id="title" placeholder="Product Title">
+  <input id="desc" placeholder="Description">
+  <input id="link" placeholder="Affiliate Link (Amazon/Flipkart)">
+  <select id="category">
+    <option value="gadgets">Gadgets</option>
+    <option value="fashion">Fashion</option>
+    <option value="useful">Useful</option>
+  </select>
+  <button onclick="addProduct()">Add Product</button>
+</div>
+
+<div class="products" id="products"></div>
+<button id="loadMoreBtn" onclick="loadMore()">Load More</button>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAoTFkBa7_LvMCa2JR_nqlxSg6H82sb9rI",
+  authDomain: "findly-app-8bdf6.firebaseapp.com",
+  projectId: "findly-app-8bdf6",
+  storageBucket: "findly-app-8bdf6.firebasestorage.app",
+  messagingSenderId: "71632931005",
+  appId: "1:71632931005:web:f3cdf4eb05082cedb4cfd4"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+let allProducts = [];
+let displayedCount = 0;
+const perLoad = 8;
+let currentCategory = 'all';
+const placeholderImg = "https://via.placeholder.com/300x220?text=No+Image";
+
+// ===== AUTO-ADD DEFAULT VIRAL PRODUCTS =====
+async function addViralProductsOnce() {
+  const snapshot = await getDocs(collection(db, "products"));
+  if(snapshot.size > 0) return;
+
+  const viralProducts = [
+    {img:"https://m.media-amazon.com/images/I/61EXU8BuGZL._SL1500_.jpg", title:"₹999 Earbuds 😳", desc:"High-quality wireless earbuds", category:"gadgets", link:"https://amzn.to/3E1Earbud"},
+    {img:"https://m.media-amazon.com/images/I/71f0sFnE5ML._SL1500_.jpg", title:"Smart Watch Under ₹1500 🔥", desc:"Track steps & calls", category:"gadgets", link:"https://amzn.to/3E1Watch"},
+    {img:"https://m.media-amazon.com/images/I/71p6R5cH5zL._SL1500_.jpg", title:"LED Desk Lamp 💡", desc:"Touch control, color changing", category:"useful", link:"https://amzn.to/3ELamp"},
+    {img:"https://m.media-amazon.com/images/I/71xC6XjYQKL._SL1500_.jpg", title:"Foldable Laptop Stand 👌", desc:"Comfortable & portable", category:"useful", link:"https://amzn.to/3EStand"},
+    {img:"https://m.media-amazon.com/images/I/81pA5dr2G7L._SL1500_.jpg", title:"Stylish Sneakers 👟", desc:"Casual wear", category:"fashion", link:"https://amzn.to/3ESneakers"},
+    {img:"https://m.media-amazon.com/images/I/71ReC+3v2FL._SL1500_.jpg", title:"Trendy Handbag 👜", desc:"Spacious & fashionable", category:"fashion", link:"https://amzn.to/3EHandbag"},
+    {img:"https://m.media-amazon.com/images/I/61f+6a4r32L._SL1500_.jpg", title:"Fast Charging Power Bank ⚡", desc:"Never run out of battery", category:"gadgets", link:"https://amzn.to/3EPower"},
+    {img:"https://m.media-amazon.com/images/I/71iQj2x6aPL._SL1500_.jpg", title:"Car Phone Holder 🚗", desc:"Safe & easy navigation", category:"useful", link:"https://amzn.to/3EHolder"},
+    {img:"https://m.media-amazon.com/images/I/71YB4jv+GQL._SL1500_.jpg", title:"Bluetooth Speaker 🔊", desc:"Portable premium sound", category:"gadgets", link:"https://amzn.to/3ESpeaker"},
+    {img:"https://m.media-amazon.com/images/I/71aYxLprTsL._SL1500_.jpg", title:"Kitchen Tool 🍳", desc:"Slice, dice, chop", category:"useful", link:"https://amzn.to/3EKitchen"}
+  ];
+
+  for(const p of viralProducts){
+    await addDoc(collection(db, "products"), {...p, addedAt: serverTimestamp()});
+  }
+}
+
+// ===== FIX MISSING LINKS =====
+async function fixMissingLinks() {
+  const snapshot = await getDocs(collection(db, "products"));
+  const categoryDefaultLinks = {gadgets:"https://amzn.to/3E1Earbud", fashion:"https://amzn.to/3ESneakers", useful:"https://amzn.to/3ELamp"};
+  snapshot.docs.forEach(async (d)=>{
+    const data = d.data();
+    if(!data.link || data.link===""){
+      const productRef = doc(db,"products",d.id);
+      const defaultLink = categoryDefaultLinks[data.category] || "https://amzn.to/3E1Earbud";
+      await updateDoc(productRef,{link:defaultLink});
+    }
+  });
+}
+
+// ===== LOAD PRODUCTS =====
+async function loadProducts() {
+  const container = document.getElementById("products");
+  if(allProducts.length===0){
+    const snapshot = await getDocs(collection(db, "products"));
+    allProducts = snapshot.docs.map(doc=>({...doc.data(), id:doc.id}));
+  }
+  container.innerHTML="";
+  displayedCount=0;
+  loadMore();
+}
+
+function displayProducts(items){
+  const container = document.getElementById("products");
+  items.forEach(p=>{
+    if(currentCategory!=='all' && p.category!==currentCategory) return;
+    const score=(Math.random()*2+8).toFixed(1);
+    const imgUrl=p.img&&p.img.length>0?p.img:placeholderImg;
+    const isNew = p.addedAt ? new Date(p.addedAt.seconds*1000).toDateString() === new Date().toDateString() : false;
+    container.innerHTML+=`
+      <div class="card">
+        ${isNew?'<div class="new-badge">🌟 New</div>':''}
+        <img src="${imgUrl}" loading="lazy">
+        <div class="card-content">
+          <div class="title">${p.title}</div>
+          <div class="desc">${p.desc||""}</div>
+          <div class="ai-pick">⚡ AI Pick</div>
+          <div class="score">🔥 Trending Score: ${score}</div>
+          <a href="${p.link||'#'}" class="btn" target="_blank">Buy Now</a>
+        </div>
+      </div>
+    `;
+  });
+}
+
+function loadMore(){
+  const nextItems = allProducts.slice(displayedCount, displayedCount+perLoad);
+  displayProducts(nextItems);
+  displayedCount+=perLoad;
+  document.getElementById("loadMoreBtn").style.display=(displayedCount>=allProducts.length)?"none":"block";
+}
+
+// ===== UI FUNCTIONS =====
+window.toggleForm=function(){
+  const f=document.getElementById("formBox");
+  f.style.display=f.style.display==="none"?"block":"none";
+}
+
+window.addProduct=async function(){
+  const img=document.getElementById("img").value;
+  const title=document.getElementById("title").value;
+  const desc=document.getElementById("desc").value;
+  const link=document.getElementById("link").value;
+  const category=document.getElementById("category").value;
+  if(!img||!title||!link){alert("Please fill required fields");return;}
+  await addDoc(collection(db,"products"),{img,title,desc,link,category,addedAt:serverTimestamp()});
+  allProducts.push({img,title,desc,link,category,addedAt:{seconds:Math.floor(Date.now()/1000)}});
+  loadProducts();
+  document.getElementById("formBox").style.display="none";
+}
+
+window.filterCategory=function(cat){
+  currentCategory=cat;
+  loadProducts();
+}
+
+window.searchProducts=function(){
+  const term=document.getElementById("searchInput").value.toLowerCase();
+  const filtered=allProducts.filter(p=>p.title.toLowerCase().includes(term)||(p.desc&&p.desc.toLowerCase().includes(term)));
+  document.getElementById("products").innerHTML="";
+  displayProducts(filtered);
+}
+
+// ===== AUTO LOAD MORE ON SCROLL =====
+window.addEventListener('scroll',()=>{
+  const bottom=(window.innerHeight + window.scrollY) >= document.body.offsetHeight-100;
+  if(bottom){loadMore();}
+});
+
+// ===== INIT =====
+await addViralProductsOnce();
+await fixMissingLinks();
+loadProducts();
+</script>
+</body>
+</html>

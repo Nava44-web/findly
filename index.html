@@ -4,174 +4,55 @@
 <meta charset="UTF-8">
 <title>Findly</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <style>
-body {
-  margin:0;
-  font-family: 'Segoe UI', sans-serif;
-  background:#f9f9f9;
-}
+/* ======= GLOBAL ======= */
+body{margin:0;font-family:'Segoe UI',sans-serif;background:#f9f9f9;}
+a{text-decoration:none;}
+button{cursor:pointer;}
+/* ======= HEADER ======= */
+header{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;padding:15px 20px;background:white;box-shadow:0 2px 5px rgba(0,0,0,0.05);}
+.logo{font-size:22px;font-weight:600;}
+.logo span{color:#ff3d00;}
+header nav{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;width:100%;}
+header nav input[type="text"]{padding:6px 10px;border-radius:20px;border:1px solid #ddd;width:50%;margin:10px;}
+header nav button{background:#ff3d00;color:white;border:none;padding:8px 14px;border-radius:20px;margin-left:10px;}
 
-/* NAVBAR */
-header {
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:15px 20px;
-  background:white;
-  box-shadow:0 2px 5px rgba(0,0,0,0.05);
-  flex-wrap:wrap;
-}
+/* ======= HERO ======= */
+.hero{text-align:center;padding:30px 20px;}
+.hero h2{font-size:28px;}
+.hero p{color:#666;font-size:16px;}
 
-.logo {
-  font-size:22px;
-  font-weight:600;
-}
+/* ======= CATEGORIES ======= */
+#categories{text-align:center;margin-bottom:20px;}
+#categories button{margin:3px;padding:6px 12px;border-radius:20px;border:none;background:#ddd;transition:.2s;}
+#categories button:hover{background:#ff3d00;color:white;}
 
-.logo span {
-  color:#ff3d00;
-}
+/* ======= ADD PRODUCT FORM ======= */
+#formBox{display:none;padding:15px;margin:20px auto;background:white;border-radius:12px;box-shadow:0 3px 10px rgba(0,0,0,0.05);width:90%;max-width:400px;}
+#formBox input,#formBox select{width:100%;padding:10px;margin:6px 0;border:1px solid #ddd;border-radius:8px;}
+#formBox button{width:100%;padding:10px;background:#ff3d00;color:white;border:none;border-radius:20px;margin-top:10px;}
 
-header nav {
-  display:flex;
-  flex-wrap:wrap;
-  align-items:center;
-}
+/* ======= PRODUCTS ======= */
+.products{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:15px;padding:20px;}
+.card{background:white;border-radius:12px;overflow:hidden;box-shadow:0 3px 10px rgba(0,0,0,0.05);transition:.2s;}
+.card:hover{transform:translateY(-5px);}
+.card img{width:100%;height:220px;object-fit:cover;}
+.card-content{padding:10px;}
+.title{font-weight:600;font-size:14px;}
+.desc{color:#777;font-size:12px;}
+.btn{display:block;text-align:center;background:#ff3d00;color:white;padding:8px;margin-top:10px;border-radius:20px;font-weight:600;}
+.score{color:#ff3d00;font-size:12px;}
+.ai-pick{color:green;font-size:12px;font-weight:600;}
 
-header nav input[type="text"] {
-  padding:6px 10px;
-  margin-right:10px;
-  border-radius:20px;
-  border:1px solid #ddd;
-}
+/* ======= LOAD MORE ======= */
+#loadMoreBtn{display:block;margin:20px auto;padding:10px 20px;border:none;border-radius:20px;background:#ff3d00;color:white;}
 
-button {
-  background:#ff3d00;
-  color:white;
-  border:none;
-  padding:8px 14px;
-  border-radius:20px;
-  cursor:pointer;
-  margin:3px;
-}
-
-/* HERO */
-.hero {
-  text-align:center;
-  padding:30px 20px;
-}
-
-.hero h2 {
-  font-size:28px;
-}
-
-.hero p {
-  color:#666;
-  font-size:16px;
-}
-
-/* CATEGORY BUTTONS */
-#categories {
-  text-align:center;
-  margin-bottom:20px;
-}
-
-#formBox {
-  display:none;
-  padding:15px;
-  margin:20px;
-  background:white;
-  border-radius:12px;
-  box-shadow:0 3px 10px rgba(0,0,0,0.05);
-}
-
-input, select {
-  width:100%;
-  padding:10px;
-  margin:6px 0;
-  border:1px solid #ddd;
-  border-radius:8px;
-}
-
-.products {
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-  gap:15px;
-  padding:20px;
-}
-
-.card {
-  background:white;
-  border-radius:12px;
-  overflow:hidden;
-  box-shadow:0 3px 10px rgba(0,0,0,0.05);
-  transition:0.2s;
-}
-
-.card:hover {
-  transform: translateY(-5px);
-}
-
-.card img {
-  width:100%;
-  height:220px;
-  object-fit:cover;
-}
-
-.card-content {
-  padding:10px;
-}
-
-.title {
-  font-weight:600;
-  font-size:14px;
-}
-
-.desc {
-  color:#777;
-  font-size:12px;
-}
-
-.btn {
-  display:block;
-  text-align:center;
-  background:#ff3d00;
-  color:white;
-  padding:8px;
-  margin-top:10px;
-  border-radius:20px;
-  text-decoration:none;
-  font-weight:600;
-}
-
-.score {
-  color:#ff3d00;
-  font-size:12px;
-}
-
-.ai-pick {
-  color:green;
-  font-size:12px;
-  font-weight:600;
-}
-
-/* LOAD MORE BUTTON */
-#loadMoreBtn {
-  display:block;
-  margin:20px auto;
-  padding:10px 20px;
-}
-
-/* RESPONSIVE */
+/* ======= RESPONSIVE ======= */
 @media(max-width:600px){
-  header nav input[type="text"]{
-    width:100%;
-    margin:5px 0;
-  }
+  header nav input[type="text"]{width:90%;margin:5px 0;}
 }
 </style>
 </head>
-
 <body>
 
 <header>
@@ -212,8 +93,7 @@ input, select {
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs } 
-from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAoTFkBa7_LvMCa2JR_nqlxSg6H82sb9rI",
@@ -232,28 +112,31 @@ let displayedCount = 0;
 const perLoad = 8;
 let currentCategory = 'all';
 
-async function addViralProducts() {
-  const existing = await getDocs(collection(db, "products"));
-  if(existing.size > 0) return;
+// ===== AUTO-ADD VIRAL PRODUCTS =====
+async function addViralProductsOnce() {
+  const snapshot = await getDocs(collection(db, "products"));
+  if(snapshot.size > 0) return;
 
   const viralProducts = [
-    {img:"https://m.media-amazon.com/images/I/61EXU8BuGZL._SL1500_.jpg", title:"This ₹999 Earbud is going viral 😳", desc:"High-quality wireless earbuds with clear sound", category:"gadgets", link:"https://amzn.to/3E1Earbud"},
-    {img:"https://m.media-amazon.com/images/I/71f0sFnE5ML._SL1500_.jpg", title:"Smart Watch Under ₹1500 That Everyone Wants 🔥", desc:"Track your health, steps, and calls", category:"gadgets", link:"https://amzn.to/3E1Watch"},
-    {img:"https://m.media-amazon.com/images/I/71p6R5cH5zL._SL1500_.jpg", title:"LED Desk Lamp That Changes Your Mood 💡", desc:"Touch control, color changing", category:"useful", link:"https://amzn.to/3ELamp"},
-    {img:"https://m.media-amazon.com/images/I/71xC6XjYQKL._SL1500_.jpg", title:"Foldable Laptop Stand For Work From Home 👌", desc:"Comfortable & portable", category:"useful", link:"https://amzn.to/3EStand"},
-    {img:"https://m.media-amazon.com/images/I/81pA5dr2G7L._SL1500_.jpg", title:"Stylish Men’s Sneakers Under ₹1999 👟", desc:"Perfect for casual wear", category:"fashion", link:"https://amzn.to/3ESneakers"},
-    {img:"https://m.media-amazon.com/images/I/71ReC+3v2FL._SL1500_.jpg", title:"Women’s Trendy Handbag That Turns Heads 👜", desc:"Spacious & fashionable", category:"fashion", link:"https://amzn.to/3EHandbag"},
-    {img:"https://m.media-amazon.com/images/I/61f+6a4r32L._SL1500_.jpg", title:"Fast Charging Power Bank 20,000mAh ⚡", desc:"Never run out of battery", category:"gadgets", link:"https://amzn.to/3EPower"},
+    {img:"https://m.media-amazon.com/images/I/61EXU8BuGZL._SL1500_.jpg", title:"This ₹999 Earbud is going viral 😳", desc:"High-quality wireless earbuds", category:"gadgets", link:"https://amzn.to/3E1Earbud"},
+    {img:"https://m.media-amazon.com/images/I/71f0sFnE5ML._SL1500_.jpg", title:"Smart Watch Under ₹1500 🔥", desc:"Track your health, steps, and calls", category:"gadgets", link:"https://amzn.to/3E1Watch"},
+    {img:"https://m.media-amazon.com/images/I/71p6R5cH5zL._SL1500_.jpg", title:"LED Desk Lamp 💡", desc:"Touch control, color changing", category:"useful", link:"https://amzn.to/3ELamp"},
+    {img:"https://m.media-amazon.com/images/I/71xC6XjYQKL._SL1500_.jpg", title:"Foldable Laptop Stand 👌", desc:"Comfortable & portable", category:"useful", link:"https://amzn.to/3EStand"},
+    {img:"https://m.media-amazon.com/images/I/81pA5dr2G7L._SL1500_.jpg", title:"Stylish Men’s Sneakers 👟", desc:"Perfect for casual wear", category:"fashion", link:"https://amzn.to/3ESneakers"},
+    {img:"https://m.media-amazon.com/images/I/71ReC+3v2FL._SL1500_.jpg", title:"Women’s Trendy Handbag 👜", desc:"Spacious & fashionable", category:"fashion", link:"https://amzn.to/3EHandbag"},
+    {img:"https://m.media-amazon.com/images/I/61f+6a4r32L._SL1500_.jpg", title:"Fast Charging Power Bank ⚡", desc:"Never run out of battery", category:"gadgets", link:"https://amzn.to/3EPower"},
     {img:"https://m.media-amazon.com/images/I/71iQj2x6aPL._SL1500_.jpg", title:"Magnetic Car Phone Holder 🚗", desc:"Safe & easy navigation", category:"useful", link:"https://amzn.to/3EHolder"},
-    {img:"https://m.media-amazon.com/images/I/71YB4jv+GQL._SL1500_.jpg", title:"Bluetooth Speaker That Blasts 🔊", desc:"Compact, portable, premium sound", category:"gadgets", link:"https://amzn.to/3ESpeaker"},
-    {img:"https://m.media-amazon.com/images/I/71aYxLprTsL._SL1500_.jpg", title:"Multifunctional Kitchen Tool 🍳", desc:"Slice, dice, chop like a pro", category:"useful", link:"https://amzn.to/3EKitchen"},
+    {img:"https://m.media-amazon.com/images/I/71YB4jv+GQL._SL1500_.jpg", title:"Bluetooth Speaker 🔊", desc:"Compact, portable, premium sound", category:"gadgets", link:"https://amzn.to/3ESpeaker"},
+    {img:"https://m.media-amazon.com/images/I/71aYxLprTsL._SL1500_.jpg", title:"Multifunctional Kitchen Tool 🍳", desc:"Slice, dice, chop like a pro", category:"useful", link:"https://amzn.to/3EKitchen"}
   ];
 
   for(const p of viralProducts){
     await addDoc(collection(db, "products"), p);
   }
+  console.log("✅ Viral products added to Firestore with affiliate links");
 }
 
+// ===== LOAD PRODUCTS =====
 async function loadProducts() {
   const container = document.getElementById("products");
   if(allProducts.length === 0){
@@ -296,6 +179,7 @@ function loadMore(){
   }
 }
 
+// ===== UI FUNCTIONS =====
 window.toggleForm = function(){
   const f = document.getElementById("formBox");
   f.style.display = f.style.display === "none" ? "block" : "none";
@@ -331,9 +215,9 @@ window.searchProducts = function(){
   displayProducts(filtered);
 }
 
-await addViralProducts();
+// ===== INIT =====
+await addViralProductsOnce();
 loadProducts();
-
 </script>
 
 </body>

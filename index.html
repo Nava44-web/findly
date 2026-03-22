@@ -22,10 +22,10 @@ nav button{background:linear-gradient(45deg,#ff3d00,#ff9900);color:white;border:
 #formBox{display:none;padding:15px;margin:20px auto;background:white;border-radius:15px;box-shadow:0 5px 15px rgba(0,0,0,0.1);width:90%;max-width:400px;}
 #formBox input,#formBox select{width:100%;padding:10px;margin:8px 0;border:1px solid #ddd;border-radius:12px;}
 #formBox button{width:100%;padding:12px;background:linear-gradient(45deg,#ff3d00,#ff9900);color:white;border:none;border-radius:25px;margin-top:10px;font-weight:600;}
-.products{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px;padding:20px;}
+.products{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:15px;padding:20px;}
 .card{background:white;border-radius:15px;overflow:hidden;box-shadow:0 5px 15px rgba(0,0,0,0.08);transition:0.3s;position:relative;}
 .card:hover{transform:translateY(-7px);box-shadow:0 10px 20px rgba(0,0,0,0.15);}
-.card img{width:100%;height:220px;object-fit:cover;background:#f0f0f0;}
+.card img{width:100%;height:160px;object-fit:cover;background:#f0f0f0;}
 .card-content{padding:12px;}
 .title{font-weight:700;font-size:15px;color:#333;}
 .desc{color:#666;font-size:13px;margin:5px 0;}
@@ -39,6 +39,7 @@ nav button{background:linear-gradient(45deg,#ff3d00,#ff9900);color:white;border:
 #loadMoreBtn:hover{opacity:0.9;}
 @media(max-width:600px){
   nav input[type="text"]{width:90%;}
+  .card img{height:120px;}
 }
 </style>
 </head>
@@ -102,7 +103,7 @@ const perLoad = 8;
 let currentCategory = 'all';
 const placeholderImg = "https://via.placeholder.com/300x220?text=No+Image";
 
-// ===== AUTO-ADD DEFAULT VIRAL PRODUCTS =====
+// AUTO-ADD DEFAULT VIRAL PRODUCTS ONLY ONCE
 async function addViralProductsOnce() {
   const snapshot = await getDocs(collection(db, "products"));
   if(snapshot.size > 0) return;
@@ -125,21 +126,7 @@ async function addViralProductsOnce() {
   }
 }
 
-// ===== FIX MISSING LINKS =====
-async function fixMissingLinks() {
-  const snapshot = await getDocs(collection(db, "products"));
-  const categoryDefaultLinks = {gadgets:"https://amzn.to/3E1Earbud", fashion:"https://amzn.to/3ESneakers", useful:"https://amzn.to/3ELamp"};
-  snapshot.docs.forEach(async (d)=>{
-    const data = d.data();
-    if(!data.link || data.link===""){
-      const productRef = doc(db,"products",d.id);
-      const defaultLink = categoryDefaultLinks[data.category] || "https://amzn.to/3E1Earbud";
-      await updateDoc(productRef,{link:defaultLink});
-    }
-  });
-}
-
-// ===== LOAD PRODUCTS =====
+// LOAD PRODUCTS
 async function loadProducts() {
   const container = document.getElementById("products");
   if(allProducts.length===0){
@@ -181,7 +168,7 @@ function loadMore(){
   document.getElementById("loadMoreBtn").style.display=(displayedCount>=allProducts.length)?"none":"block";
 }
 
-// ===== UI FUNCTIONS =====
+// UI FUNCTIONS
 window.toggleForm=function(){
   const f=document.getElementById("formBox");
   f.style.display=f.style.display==="none"?"block":"none";
@@ -212,15 +199,14 @@ window.searchProducts=function(){
   displayProducts(filtered);
 }
 
-// ===== AUTO LOAD MORE ON SCROLL =====
+// AUTO LOAD MORE ON SCROLL
 window.addEventListener('scroll',()=>{
   const bottom=(window.innerHeight + window.scrollY) >= document.body.offsetHeight-100;
   if(bottom){loadMore();}
 });
 
-// ===== INIT =====
+// INIT
 await addViralProductsOnce();
-await fixMissingLinks();
 loadProducts();
 </script>
 </body>

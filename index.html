@@ -38,6 +38,7 @@ button {
   padding:8px 14px;
   border-radius:20px;
   cursor:pointer;
+  margin:3px;
 }
 
 /* HERO */
@@ -52,6 +53,13 @@ button {
 
 .hero p {
   color:#666;
+  font-size:16px;
+}
+
+/* CATEGORY BUTTONS */
+#categories {
+  text-align:center;
+  margin-bottom:20px;
 }
 
 /* FORM */
@@ -74,7 +82,7 @@ input {
 
 /* PRODUCTS GRID */
 .products {
-  column-count: 4;
+  column-count: 3;
   column-gap: 15px;
   padding:20px;
 }
@@ -121,6 +129,18 @@ input {
   margin-top:10px;
   border-radius:20px;
   text-decoration:none;
+  font-weight:600;
+}
+
+.score {
+  color:#ff3d00;
+  font-size:12px;
+}
+
+.ai-pick {
+  color:green;
+  font-size:12px;
+  font-weight:600;
 }
 </style>
 </head>
@@ -133,8 +153,16 @@ input {
 </header>
 
 <div class="hero">
-  <h2>Find What’s Trending 🔥</h2>
-  <p>Discover viral products before everyone else</p>
+  <h2>Viral Products You Didn’t Know You Needed 🔥</h2>
+  <p>Discover trending items before everyone else</p>
+</div>
+
+<!-- CATEGORY BUTTONS -->
+<div id="categories">
+  <button onclick="filterCategory('all')">🔥 All</button>
+  <button onclick="filterCategory('gadgets')">📱 Gadgets</button>
+  <button onclick="filterCategory('fashion')">👕 Fashion</button>
+  <button onclick="filterCategory('useful')">💡 Useful</button>
 </div>
 
 <!-- ADD PRODUCT FORM -->
@@ -143,6 +171,7 @@ input {
   <input id="title" placeholder="Product Title">
   <input id="desc" placeholder="Description">
   <input id="link" placeholder="Affiliate Link">
+  <input id="category" placeholder="Category (gadgets/fashion/useful)">
   <button onclick="addProduct()">Add Product</button>
 </div>
 
@@ -167,6 +196,8 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+let currentCategory = 'all';
+
 // TOGGLE FORM
 window.toggleForm = function() {
   let f = document.getElementById("formBox");
@@ -179,6 +210,7 @@ window.addProduct = async function () {
   let title = document.getElementById("title").value;
   let desc = document.getElementById("desc").value;
   let link = document.getElementById("link").value;
+  let category = document.getElementById("category").value || "other";
 
   if(!img || !title || !link){
     alert("Please fill required fields");
@@ -186,7 +218,7 @@ window.addProduct = async function () {
   }
 
   await addDoc(collection(db, "products"), {
-    img, title, desc, link
+    img, title, desc, link, category
   });
 
   alert("Product Added ✅");
@@ -195,6 +227,12 @@ window.addProduct = async function () {
 
   loadProducts();
 };
+
+// FILTER CATEGORY
+window.filterCategory = function(cat){
+  currentCategory = cat;
+  loadProducts();
+}
 
 // LOAD PRODUCTS
 async function loadProducts() {
@@ -205,21 +243,22 @@ async function loadProducts() {
   querySnapshot.forEach((doc) => {
     let p = doc.data();
 
-  let score = (Math.random() * 2 + 8).toFixed(1);
+    if(currentCategory !== 'all' && p.category !== currentCategory) return;
 
-let html = `
-<div class="card">
-  <img src="${p.img}">
-  <div class="card-content">
-    <div class="title">${p.title}</div>
-    <div class="desc">${p.desc || ""}</div>
-    <div style="color:#ff3d00;font-size:12px;">
-      🔥 Trending Score: ${score}
+    let score = (Math.random() * 2 + 8).toFixed(1); // Trending score
+
+    let html = `
+    <div class="card">
+      <img src="${p.img}">
+      <div class="card-content">
+        <div class="title">${p.title}</div>
+        <div class="desc">${p.desc || ""}</div>
+        <div class="ai-pick">⚡ AI Pick</div>
+        <div class="score">🔥 Trending Score: ${score}</div>
+        <a href="${p.link}" class="btn">Buy Now</a>
+      </div>
     </div>
-    <a href="${p.link}" class="btn">Buy Now</a>
-  </div>
-</div>
-`;    
+    `;
 
     document.getElementById("products").innerHTML += html;
   });

@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Findly</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+  margin:0;
+  font-family: 'Segoe UI', sans-serif;
+  background:#f9f9f9;
+}
+
+/* NAVBAR */
+header {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:15px 20px;
+  background:white;
+  box-shadow:0 2px 5px rgba(0,0,0,0.05);
+}
+
+.logo {
+  font-size:22px;
+  font-weight:600;
+}
+
+.logo span {
+  color:#ff3d00;
+}
+
+button {
+  background:#ff3d00;
+  color:white;
+  border:none;
+  padding:8px 14px;
+  border-radius:20px;
+  cursor:pointer;
+  margin:3px;
+}
+
+/* HERO */
+.hero {
+  text-align:center;
+  padding:40px 20px;
+}
+
+.hero h2 {
+  font-size:28px;
+}
+
+.hero p {
+  color:#666;
+  font-size:16px;
+}
+
+/* CATEGORY BUTTONS */
+#categories {
+  text-align:center;
+  margin-bottom:20px;
+}
+
+/* FORM */
+#formBox {
+  display:none;
+  padding:15px;
+  margin:20px;
+  background:white;
+  border-radius:12px;
+  box-shadow:0 3px 10px rgba(0,0,0,0.05);
+}
+
+input {
+  width:100%;
+  padding:10px;
+  margin:6px 0;
+  border:1px solid #ddd;
+  border-radius:8px;
+}
+
+/* PRODUCTS GRID */
+.products {
+  column-count: 3;
+  column-gap: 15px;
+  padding:20px;
+}
+
+.card {
+  display:inline-block;
+  background:white;
+  margin-bottom:15px;
+  width:100%;
+  border-radius:12px;
+  overflow:hidden;
+  box-shadow:0 3px 10px rgba(0,0,0,0.05);
+  transition:0.2s;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+.card img {
+  width:100%;
+}
+
+.card-content {
+  padding:10px;
+}
+
+.title {
+  font-weight:600;
+  font-size:14px;
+}
+
+.desc {
+  color:#777;
+  font-size:12px;
+}
+
+.btn {
+  display:block;
+  text-align:center;
+  background:#ff3d00;
+  color:white;
+  padding:8px;
+  margin-top:10px;
+  border-radius:20px;
+  text-decoration:none;
+  font-weight:600;
+}
+
+.score {
+  color:#ff3d00;
+  font-size:12px;
+}
+
+.ai-pick {
+  color:green;
+  font-size:12px;
+  font-weight:600;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="logo">Find<span>ly 🔥</span></div>
+  <button onclick="toggleForm()">+ Add Product</button>
+</header>
+
+<div class="hero">
+  <h2>Viral Products You Didn’t Know You Needed 🔥</h2>
+  <p>Discover trending items before everyone else</p>
+</div>
+
+<!-- CATEGORY BUTTONS -->
+<div id="categories">
+  <button onclick="filterCategory('all')">🔥 All</button>
+  <button onclick="filterCategory('gadgets')">📱 Gadgets</button>
+  <button onclick="filterCategory('fashion')">👕 Fashion</button>
+  <button onclick="filterCategory('useful')">💡 Useful</button>
+</div>
+
+<!-- ADD PRODUCT FORM -->
+<div id="formBox">
+  <input id="img" placeholder="Image URL">
+  <input id="title" placeholder="Product Title">
+  <input id="desc" placeholder="Description">
+  <input id="link" placeholder="Affiliate Link">
+  <input id="category" placeholder="Category (gadgets/fashion/useful)">
+  <button onclick="addProduct()">Add Product</button>
+</div>
+
+<!-- PRODUCTS -->
+<div class="products" id="products"></div>
+
+<!-- FIREBASE -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs } 
+from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAoTFkBa7_LvMCa2JR_nqlxSg6H82sb9rI",
+  authDomain: "findly-app-8bdf6.firebaseapp.com",
+  projectId: "findly-app-8bdf6",
+  storageBucket: "findly-app-8bdf6.firebasestorage.app",
+  messagingSenderId: "71632931005",
+  appId: "1:71632931005:web:f3cdf4eb05082cedb4cfd4"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+let currentCategory = 'all';
+
+// TOGGLE FORM
+window.toggleForm = function() {
+  let f = document.getElementById("formBox");
+  f.style.display = f.style.display === "none" ? "block" : "none";
+};
+
+// ADD PRODUCT
+window.addProduct = async function () {
+  let img = document.getElementById("img").value;
+  let title = document.getElementById("title").value;
+  let desc = document.getElementById("desc").value;
+  let link = document.getElementById("link").value;
+  let category = document.getElementById("category").value || "other";
+
+  if(!img || !title || !link){
+    alert("Please fill required fields");
+    return;
+  }
+
+  await addDoc(collection(db, "products"), {
+    img, title, desc, link, category
+  });
+
+  alert("Product Added ✅");
+
+  document.getElementById("formBox").style.display = "none";
+
+  loadProducts();
+};
+
+// FILTER CATEGORY
+window.filterCategory = function(cat){
+  currentCategory = cat;
+  loadProducts();
+}
+
+// LOAD PRODUCTS
+async function loadProducts() {
+  document.getElementById("products").innerHTML = "";
+
+  const querySnapshot = await getDocs(collection(db, "products"));
+
+  querySnapshot.forEach((doc) => {
+    let p = doc.data();
+
+    if(currentCategory !== 'all' && p.category !== currentCategory) return;
+
+    let score = (Math.random() * 2 + 8).toFixed(1); // Trending score
+
+    let html = `
+    <div class="card">
+      <img src="${p.img}">
+      <div class="card-content">
+        <div class="title">${p.title}</div>
+        <div class="desc">${p.desc || ""}</div>
+        <div class="ai-pick">⚡ AI Pick</div>
+        <div class="score">🔥 Trending Score: ${score}</div>
+        <a href="${p.link}" class="btn">Buy Now</a>
+      </div>
+    </div>
+    `;
+
+    document.getElementById("products").innerHTML += html;
+  });
+}
+
+loadProducts();
+</script>
+
+</body>
+</html>

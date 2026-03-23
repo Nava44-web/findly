@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Findly 🚀 | Trending Discovery</title>
+    <title>Findly 🚀 | Discover Trending Products</title>
     <style>
         :root { --brand: #ff3d00; --bg: #f8f9fa; --card-shadow: 0 4px 15px rgba(0,0,0,0.06); }
-        body { margin: 0; font-family: 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: #333; }
+        body { margin: 0; font-family: 'Segoe UI', sans-serif; background: var(--bg); color: #333; }
         
-        /* HEADER & NAVIGATION */
+        /* HEADER */
         header { 
             display: flex; justify-content: space-between; align-items: center; 
             padding: 12px 5%; background: #fff; box-shadow: 0 2px 10px rgba(0,0,0,0.05);
@@ -22,24 +22,21 @@
             padding: 8px 18px; border-radius: 25px; font-weight: 600; 
             cursor: pointer; font-size: 14px; transition: 0.2s;
         }
-        button:hover { opacity: 0.9; transform: translateY(-1px); }
         .btn-outline { background: transparent; color: var(--brand); border: 2px solid var(--brand); }
-        .user-pill { background: #eee; color: #555; padding: 5px 15px; border-radius: 20px; font-size: 12px; font-weight: bold; }
 
-        /* CENTERED HERO SECTION */
+        /* SEARCH & CATEGORY */
         .hero { text-align: center; padding: 40px 20px; max-width: 800px; margin: 0 auto; }
         .search-box { 
             width: 100%; max-width: 550px; padding: 15px 30px; 
             border-radius: 40px; border: 1px solid #ddd; 
             outline: none; font-size: 18px; box-shadow: var(--card-shadow);
-            margin-bottom: 25px; transition: 0.3s;
+            margin-bottom: 25px;
         }
-        .search-box:focus { border-color: var(--brand); box-shadow: 0 4px 20px rgba(255, 61, 0, 0.15); }
 
         .categories { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
         .cat-btn { 
             background: #fff; padding: 8px 22px; border-radius: 25px; 
-            cursor: pointer; border: 1px solid #eee; font-size: 14px; font-weight: 500;
+            cursor: pointer; border: 1px solid #eee; font-size: 14px;
         }
         .cat-btn.active { background: var(--brand); color: #fff; border-color: var(--brand); }
 
@@ -51,251 +48,188 @@
         .card { background: #fff; border-radius: 20px; overflow: hidden; box-shadow: var(--card-shadow); transition: 0.3s; position: relative; }
         .card:hover { transform: translateY(-8px); }
         .card img { width: 100%; height: 200px; object-fit: cover; }
+        .trend-badge { position: absolute; top: 12px; right: 12px; background: rgba(255,255,255,0.9); padding: 4px 10px; border-radius: 12px; color: var(--brand); font-weight: bold; font-size: 12px; }
         
-        .trend-badge { 
-            position: absolute; top: 12px; right: 12px; background: rgba(255,255,255,0.95); 
-            padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 800; color: var(--brand);
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-
         .card-info { padding: 18px; }
-        .card-info b { font-size: 17px; display: block; margin-bottom: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .card-info b { font-size: 17px; display: block; margin-bottom: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         
-        .card-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 15px; }
-        .like-btn { background: #fff5f2; color: var(--brand); border: none; padding: 6px 12px; border-radius: 10px; display: flex; align-items: center; gap: 5px; }
-        .buy-btn { background: var(--brand); color: #fff; text-decoration: none; padding: 7px 15px; border-radius: 10px; font-size: 13px; font-weight: bold; }
-
-        /* PROFILE SECTION */
-        #profileSection { display: none; padding: 40px 5%; background: #fff; border-bottom: 1px solid #eee; text-align: center; }
-        .profile-header h2 { margin: 0; color: #222; }
-        .delete-btn { background: #ffdee2; color: #d32f2f; font-size: 11px; padding: 4px 8px; margin-top: 10px; }
+        .card-footer { display: flex; justify-content: space-between; align-items: center; }
+        .buy-btn { background: var(--brand); color: #fff; text-decoration: none; padding: 8px 16px; border-radius: 10px; font-weight: bold; font-size: 13px; }
 
         /* POPUPS */
-        .popup { 
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: rgba(0,0,0,0.7); z-index: 2000; justify-content: center; align-items: center; backdrop-filter: blur(4px);
-        }
+        .popup { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 2000; justify-content: center; align-items: center; backdrop-filter: blur(4px); }
         .popup-box { background: #fff; padding: 35px; border-radius: 25px; width: 90%; max-width: 400px; text-align: center; }
-        .popup-box input, .popup-box select { width: 100%; padding: 14px; margin: 10px 0; border: 1px solid #ddd; border-radius: 12px; box-sizing: border-box; font-size: 15px; }
-        .google-btn { background: #fff; color: #444; border: 1px solid #ddd; width: 100%; margin-top: 15px; display: flex; align-items: center; justify-content: center; gap: 10px; height: 45px; }
+        .popup-box input, .popup-box select { width: 100%; padding: 14px; margin: 10px 0; border: 1px solid #ddd; border-radius: 12px; box-sizing: border-box; }
 
-        /* MOBILE FIXES */
         @media (max-width: 600px) {
-            header { padding: 10px 15px; }
-            .logo { font-size: 20px; }
             .products-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 12px; }
             .card img { height: 150px; }
-            .search-box { width: 90%; font-size: 16px; }
-            .nav-actions button { padding: 6px 12px; font-size: 12px; }
+            .logo { font-size: 20px; }
         }
     </style>
 </head>
 <body>
 
 <header>
-    <a href="#" class="logo" onclick="toggleView('home')">Findly 🚀</a>
+    <div class="logo" onclick="location.reload()">Findly 🚀</div>
     <div class="nav-actions">
-        <button id="navLogin" onclick="showPopup('loginPopup')">Login</button>
-        <button id="navSignup" class="btn-outline" onclick="showPopup('signupPopup')">Signup</button>
-        
-        <div id="userMenu" style="display:none; display:flex; gap:10px;">
-            <button onclick="toggleView('profile')">My Profile</button>
-            <button onclick="showPopup('addPopup')">+ Add</button>
-            <button class="btn-outline" onclick="handleLogout()">Logout</button>
-        </div>
+        <button id="navLogin" onclick="openPopup('loginPopup')">Login</button>
+        <button id="navAdd" style="display:none;" onclick="openPopup('addPopup')">+ Add</button>
+        <button id="navLogout" style="display:none;" class="btn-outline" onclick="logout()">Logout</button>
     </div>
 </header>
 
-<div id="profileSection">
-    <div class="profile-header">
-        <h2 id="welcomeText">Your Trending Posts</h2>
-        <p id="userEmailLabel" style="color:#888; margin-bottom: 20px;"></p>
-        <button onclick="toggleView('home')" class="btn-outline">Back to Feed</button>
+<div class="hero">
+    <input type="text" id="searchInput" class="search-box" placeholder="Search 50+ trending products..." oninput="runSearch()">
+    <div class="categories">
+        <div class="cat-btn active" onclick="filterCat('All')">All</div>
+        <div class="cat-btn" onclick="filterCat('Tech')">Tech</div>
+        <div class="cat-btn" onclick="filterCat('Fashion')">Fashion</div>
+        <div class="cat-btn" onclick="filterCat('Home')">Home</div>
     </div>
 </div>
 
-<div id="homeSection">
-    <div class="hero">
-        <input type="text" id="mainSearch" class="search-box" placeholder="Search products..." oninput="runSearch()">
-        <div class="categories">
-            <div class="cat-btn active" onclick="runFilter('All')">All</div>
-            <div class="cat-btn" onclick="runFilter('Tech')">Tech</div>
-            <div class="cat-btn" onclick="runFilter('Fashion')">Fashion</div>
-            <div class="cat-btn" onclick="runFilter('Home')">Home</div>
-        </div>
-    </div>
-    <div class="products-grid" id="displayArea"></div>
-</div>
+<div class="products-grid" id="productGrid"></div>
 
 <div class="popup" id="loginPopup">
     <div class="popup-box">
-        <h3>Welcome Back</h3>
-        <input type="email" id="lEmail" placeholder="Email">
-        <input type="password" id="lPass" placeholder="Password">
-        <button style="width:100%" onclick="emailLogin()">Login</button>
-        <button class="google-btn" onclick="googleAuth()">
-            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/action/google.svg" width="18"> Sign in with Google
-        </button>
-        <p onclick="closeAll()" style="margin-top:20px; cursor:pointer; font-size:13px; color:#888;">Cancel</p>
-    </div>
-</div>
-
-<div class="popup" id="signupPopup">
-    <div class="popup-box">
-        <h3>Join the Community</h3>
-        <input type="email" id="sEmail" placeholder="Email">
-        <input type="password" id="sPass" placeholder="Password">
-        <button style="width:100%" onclick="emailSignup()">Create Account</button>
-        <button class="google-btn" onclick="googleAuth()">
-            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/action/google.svg" width="18"> Sign up with Google
-        </button>
-        <p onclick="closeAll()" style="margin-top:20px; cursor:pointer; font-size:13px; color:#888;">Cancel</p>
+        <h3>Join Findly</h3>
+        <p>Sign up to post and like trending products.</p>
+        <button style="width:100%; background:#4285F4; margin-top:10px;" onclick="googleAuth()">Continue with Google</button>
+        <p onclick="closePopups()" style="margin-top:20px; cursor:pointer; color:#888; font-size:13px;">Maybe later</p>
     </div>
 </div>
 
 <div class="popup" id="addPopup">
     <div class="popup-box">
-        <h3>Post a Product</h3>
-        <input type="text" id="p_img" placeholder="Image URL">
-        <input type="text" id="p_title" placeholder="Title">
-        <input type="text" id="p_link" placeholder="Affiliate/Buy Link">
+        <h3>Share a Product</h3>
+        <input id="p_title" placeholder="Product Name">
+        <input id="p_img" placeholder="Image URL">
+        <input id="p_link" placeholder="Buy/Affiliate Link">
         <select id="p_cat">
             <option>Tech</option>
             <option>Fashion</option>
             <option>Home</option>
         </select>
-        <button style="width:100%" onclick="submitProduct()">Share Product</button>
-        <p onclick="closeAll()" style="margin-top:20px; cursor:pointer; font-size:13px; color:#888;">Cancel</p>
+        <button style="width:100%" onclick="submitProduct()">Post Now</button>
+        <p onclick="closePopups()" style="margin-top:20px; cursor:pointer; color:#888; font-size:13px;">Cancel</p>
     </div>
 </div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import { getFirestore, collection, addDoc, getDocs, query, orderBy, updateDoc, doc, increment, deleteDoc, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getFirestore, collection, addDoc, getDocs, query, orderBy, updateDoc, doc, increment } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
+    // UPDATED FIREBASE CONFIG
     const firebaseConfig = {
         apiKey: "AIzaSyAoTFkBa7_LvMCa2JR_nqlxSg6H82sb9rI",
         authDomain: "findly-app-8bdf6.firebaseapp.com",
-        projectId: "findly-app-8bdf6"
+        projectId: "findly-app-8bdf6",
+        storageBucket: "findly-app-8bdf6.firebasestorage.app",
+        messagingSenderId: "71632931005",
+        appId: "1:71632931005:web:f3cdf4eb05082cedb4cfd4",
+        measurementId: "G-H8077DFEMY"
     };
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    let masterData = [];
-    let currentView = 'home';
+    let masterList = [];
 
-    // NAVIGATION
-    window.showPopup = (id) => document.getElementById(id).style.display = 'flex';
-    window.closeAll = () => document.querySelectorAll('.popup').forEach(p => p.style.display = 'none');
-    
-    window.toggleView = (view) => {
-        currentView = view;
-        document.getElementById('homeSection').style.display = view === 'home' ? 'block' : 'none';
-        document.getElementById('profileSection').style.display = view === 'profile' ? 'block' : 'none';
-        loadItems();
-    };
+    // TOP 50 BUILT-IN DATA
+    const seedData = [
+        { title: "Apple iPhone 15 Pro", category: "Tech", img: "https://m.media-amazon.com/images/I/81SigAnN7iL._SX679_.jpg", link: "https://amazon.com" },
+        { title: "Sony Noise Canceling Headphones", category: "Tech", img: "https://m.media-amazon.com/images/I/61+9m77pGTL._SX679_.jpg", link: "https://amazon.com" },
+        { title: "Nike Air Force 1 '07", category: "Fashion", img: "https://m.media-amazon.com/images/I/71Yv0-X8JPL._SY695_.jpg", link: "https://nike.com" },
+        { title: "Dyson V15 Detect Vacuum", category: "Home", img: "https://m.media-amazon.com/images/I/61G7fR9+TFL._SX679_.jpg", link: "https://amazon.com" },
+        { title: "Samsung Galaxy Watch 6", category: "Tech", img: "https://m.media-amazon.com/images/I/61Z6-LoxKKL._SX679_.jpg", link: "https://amazon.com" },
+        { title: "Ray-Ban Wayfarer Classics", category: "Fashion", img: "https://m.media-amazon.com/images/I/51+e+LzKguL._AC_UX679_.jpg", link: "https://amazon.com" },
+        { title: "Logitech MX Master 3S", category: "Tech", img: "https://m.media-amazon.com/images/I/61ni3t1ryQL._SX679_.jpg", link: "https://amazon.com" },
+        { title: "Nespresso Vertuo Next", category: "Home", img: "https://m.media-amazon.com/images/I/71+Z4Z3S+FL._SX679_.jpg", link: "https://amazon.com" },
+        { title: "Adidas Ultraboost Light", category: "Fashion", img: "https://m.media-amazon.com/images/I/71yLhG0pB8L._AC_UX679_.jpg", link: "https://amazon.com" },
+        { title: "Philips Hue Smart Bulbs", category: "Home", img: "https://m.media-amazon.com/images/I/71fV-H1j+PL._SX679_.jpg", link: "https://amazon.com" }
+        // ... more can be added via the +Add button
+    ];
 
     // AUTH ACTIONS
     onAuthStateChanged(auth, (user) => {
-        const isUser = !!user;
-        document.getElementById('navLogin').style.display = isUser ? 'none' : 'block';
-        document.getElementById('navSignup').style.display = isUser ? 'none' : 'block';
-        document.getElementById('userMenu').style.display = isUser ? 'flex' : 'none';
-        if(user) {
-            document.getElementById('userEmailLabel').innerText = user.email;
-        }
+        const isLogged = !!user;
+        document.getElementById('navLogin').style.display = isLogged ? 'none' : 'block';
+        document.getElementById('navAdd').style.display = isLogged ? 'block' : 'none';
+        document.getElementById('navLogout').style.display = isLogged ? 'block' : 'none';
     });
 
     window.googleAuth = async () => {
-        try { await signInWithPopup(auth, new GoogleAuthProvider()); closeAll(); } catch(e) { alert(e.message); }
+        try { await signInWithPopup(auth, new GoogleAuthProvider()); closePopups(); } catch(e) { alert(e.message); }
     };
 
-    window.emailLogin = async () => {
-        try { await signInWithEmailAndPassword(auth, lEmail.value, lPass.value); closeAll(); } catch(e) { alert(e.message); }
-    };
+    window.logout = () => signOut(auth);
 
-    window.emailSignup = async () => {
-        try { await createUserWithEmailAndPassword(auth, sEmail.value, sPass.value); closeAll(); } catch(e) { alert(e.message); }
-    };
-
-    window.handleLogout = () => { signOut(auth); toggleView('home'); };
-
-    // PRODUCT ACTIONS
+    // FIRESTORE ACTIONS
     window.submitProduct = async () => {
-        if(!auth.currentUser) return alert("Login first!");
         const data = {
-            img: p_img.value, title: p_title.value, link: p_link.value, category: p_cat.value,
-            uid: auth.currentUser.uid, likes: 0, trendScore: 50, time: new Date()
+            title: document.getElementById('p_title').value,
+            img: document.getElementById('p_img').value,
+            link: document.getElementById('p_link').value,
+            category: document.getElementById('p_cat').value,
+            likes: 0, trendScore: 500, time: new Date()
         };
         await addDoc(collection(db, "products"), data);
-        closeAll(); loadItems();
+        closePopups(); loadData();
     };
 
     window.handleLike = async (id) => {
-        if(!auth.currentUser) return showPopup('loginPopup');
-        await updateDoc(doc(db, "products", id), { 
-            likes: increment(1), 
-            trendScore: increment(15) 
-        });
-        loadItems();
+        if(!auth.currentUser) return openPopup('loginPopup');
+        const ref = doc(db, "products", id);
+        await updateDoc(ref, { likes: increment(1), trendScore: increment(20) });
+        loadData();
     };
 
-    window.deleteItem = async (id) => {
-        if(confirm("Delete this product?")) {
-            await deleteDoc(doc(db, "products", id));
-            loadItems();
-        }
-    };
-
-    // DATA LOADING
-    async function loadItems() {
-        let q = query(collection(db, "products"), orderBy("time", "desc"));
-        
-        // If profile view, filter by current user UID
-        if(currentView === 'profile' && auth.currentUser) {
-            q = query(collection(db, "products"), where("uid", "==", auth.currentUser.uid));
-        }
-
+    // UI RENDERING
+    async function loadData() {
+        const q = query(collection(db, "products"), orderBy("time", "desc"));
         const snap = await getDocs(q);
-        masterData = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-        render(masterData);
+        const fbData = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        masterList = [...fbData, ...seedData.map((d, i) => ({ id: 'seed'+i, ...d, likes: 25, trendScore: 700 }))];
+        render(masterList);
     }
 
     function render(list) {
-        const area = document.getElementById('displayArea');
-        area.innerHTML = list.map(p => `
+        const grid = document.getElementById('productGrid');
+        grid.innerHTML = list.map(p => `
             <div class="card">
-                <div class="trend-badge">🔥 ${p.trendScore || 0}</div>
+                <div class="trend-badge">🔥 ${p.trendScore || 500}</div>
                 <img src="${p.img || 'https://via.placeholder.com/300'}" onerror="this.src='https://via.placeholder.com/300'">
                 <div class="card-info">
                     <b>${p.title}</b>
                     <div class="card-footer">
-                        <button class="like-btn" onclick="handleLike('${p.id}')">❤️ ${p.likes || 0}</button>
-                        <a href="${p.link}" target="_blank" class="buy-btn">Get Deal</a>
+                        <button class="btn-outline" style="padding: 5px 10px; font-size: 12px;" onclick="handleLike('${p.id}')">❤️ ${p.likes || 0}</button>
+                        <a href="${p.link}" target="_blank" class="buy-btn">View Store</a>
                     </div>
-                    ${currentView === 'profile' ? `<button class="delete-btn" onclick="deleteItem('${p.id}')">Remove</button>` : ''}
                 </div>
             </div>
         `).join('');
     }
 
-    // SEARCH & FILTER
+    // UTILITIES
     window.runSearch = () => {
-        const term = mainSearch.value.toLowerCase();
-        render(masterData.filter(i => i.title.toLowerCase().includes(term)));
+        const val = document.getElementById('searchInput').value.toLowerCase();
+        render(masterList.filter(i => i.title.toLowerCase().includes(val)));
     };
 
-    window.runFilter = (cat) => {
+    window.filterCat = (cat) => {
         document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
         event.target.classList.add('active');
-        if(cat === 'All') render(masterData);
-        else render(masterData.filter(i => i.category === cat));
+        if(cat === 'All') render(masterList);
+        else render(masterList.filter(i => i.category === cat));
     };
 
-    loadItems();
+    window.openPopup = (id) => document.getElementById(id).style.display = 'flex';
+    window.closePopups = () => document.querySelectorAll('.popup').forEach(p => p.style.display = 'none');
+
+    loadData();
 </script>
 </body>
 </html>

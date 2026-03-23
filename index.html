@@ -3,10 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Findly Elite | AI Pro Discovery</title>
+    <title>Findly Elite | Pro Product Discovery</title>
     
     <meta name="description" content="Findly: The elite visual discovery engine for trending AI-curated products.">
-    <meta name="google-site-verification" content="PASTE_YOUR_CODE_HERE" />
 
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
@@ -14,7 +13,7 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
         body { background: var(--dark); color: white; overflow-x: hidden; }
 
-        /* AUTH LOADER (FIXES REFRESH FLICKER) */
+        /* AUTH LOADER (Prevents Flicker) */
         #siteLoader { position: fixed; inset: 0; background: var(--dark); z-index: 10000; display: flex; align-items: center; justify-content: center; }
         .spin { width: 45px; height: 45px; border: 4px solid var(--glass); border-top-color: var(--primary); border-radius: 50%; animation: s 1s linear infinite; }
         @keyframes s { to { transform: rotate(360deg); } }
@@ -24,7 +23,6 @@
         .g-logo { font-size: 55px; font-weight: 700; margin-bottom: 5px; }
         .g-logo span { color: var(--primary); }
         .g-btn { background: var(--primary); color: white; padding: 18px 50px; border-radius: 50px; font-weight: 700; border: none; cursor: pointer; font-size: 16px; margin-top: 30px; box-shadow: 0 10px 40px rgba(255, 61, 0, 0.4); transition: 0.3s; }
-        .g-btn:hover { transform: translateY(-3px); }
 
         /* MAIN APP UI */
         #mainApp { display: none; opacity: 0; transition: 0.6s; }
@@ -34,14 +32,14 @@
 
         .search-container { position: relative; width: 100%; max-width: 750px; margin: 0 auto; }
         .main-search { width: 100%; padding: 15px 25px 15px 55px; border-radius: 50px; background: #121212; border: 2px solid transparent; color: white; font-size: 16px; outline: none; transition: 0.3s; }
-        .main-search:focus { border-color: var(--primary); background: #1a1a1a; box-shadow: 0 0 25px rgba(255, 61, 0, 0.15); }
+        .main-search:focus { border-color: var(--primary); background: #1a1a1a; }
         .search-ico { position: absolute; left: 20px; top: 50%; transform: translateY(-50%); opacity: 0.4; }
 
         .categories { display: flex; gap: 12px; padding: 15px 5%; overflow-x: auto; scrollbar-width: none; }
         .cat-pill { padding: 9px 22px; border-radius: 50px; background: var(--glass); color: #777; font-size: 13px; font-weight: 700; cursor: pointer; transition: 0.3s; white-space: nowrap; }
         .cat-pill.active { background: var(--primary); color: white; box-shadow: 0 5px 15px rgba(255, 61, 0, 0.3); }
 
-        /* MASONRY GRID */
+        /* MASONRY FEED */
         .feed { column-count: 4; column-gap: 15px; padding: 10px 5% 60px; }
         @media (max-width: 1100px) { .feed { column-count: 3; } }
         @media (max-width: 750px) { .feed { column-count: 2; } }
@@ -56,7 +54,7 @@
         .fab { position: fixed; bottom: 30px; right: 30px; background: var(--primary); width: 65px; height: 65px; border-radius: 50%; border: none; font-size: 35px; color: white; cursor: pointer; z-index: 500; box-shadow: 0 10px 30px rgba(255, 61, 0, 0.5); }
         #adminBox { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 2000; align-items: center; justify-content: center; padding: 20px; }
         .modal { background: #0f0f0f; padding: 30px; border-radius: 30px; width: 100%; max-width: 480px; border: 1px solid var(--primary); max-height: 90vh; overflow-y: auto; }
-        input, select, textarea { width: 100%; padding: 14px; margin: 8px 0; background: #181818; border: 1px solid #333; color: white; border-radius: 12px; font-size: 14px; }
+        input, select, textarea { width: 100%; padding: 14px; margin: 8px 0; background: #181818; border: 1px solid #333; color: white; border-radius: 12px; }
     </style>
 </head>
 <body>
@@ -67,7 +65,6 @@
         <h1 class="g-logo">Find<span>ly</span></h1>
         <p style="color:#555; font-weight:600;">The Elite Visual Discovery Feed</p>
         <button class="g-btn" id="loginBtn">Continue with Google →</button>
-        <p style="margin-top:25px; font-size:11px; color:#222;">Protected by Findly AI Security</p>
     </div>
 
     <div id="mainApp">
@@ -78,11 +75,11 @@
             </div>
             <div class="search-container">
                 <span class="search-ico">🔍</span>
-                <input type="text" class="main-search" id="siteSearch" placeholder="Search product names, #hashtags, or keywords...">
+                <input type="text" class="main-search" id="siteSearch" placeholder="Search names, #hashtags, or keywords...">
             </div>
         </header>
 
-        <div class="categories" id="catList">
+        <div class="categories">
             <div class="cat-pill active" onclick="filterData('All', this)">All Discovery</div>
             <div class="cat-pill" onclick="filterData('Trending', this)">🔥 Trending</div>
             <div class="cat-pill" onclick="filterData('Tech', this)">💻 Technology</div>
@@ -97,16 +94,13 @@
 
     <div id="adminBox">
         <div class="modal">
-            <h2 style="color:var(--primary); margin-bottom:10px;">New Elite Discovery</h2>
+            <h2 style="color:var(--primary); margin-bottom:10px;">New Pro Discovery</h2>
             <input type="text" id="pTitle" placeholder="Discovery Name">
-            <textarea id="pAbout" placeholder="Brief description (Good for Google Search)" rows="2"></textarea>
-            <input type="text" id="pTags" placeholder="Hashtags (e.g. #gadget #viral)">
+            <textarea id="pAbout" placeholder="Description (SEO Search Keywords)" rows="2"></textarea>
+            <input type="text" id="pTags" placeholder="Hashtags (e.g. #tech #viral)">
             <input type="text" id="pLink" placeholder="Affiliate/Buy Link">
-            <div style="background:#151515; padding:15px; border-radius:15px; margin:10px 0;">
-                <p style="font-size:10px; color:#555; margin-bottom:5px;">IMAGE SOURCE (CHOOSE ONE)</p>
-                <input type="text" id="pUrl" placeholder="Paste Image Link (Fastest)">
-                <input type="file" id="pFile" accept="image/*" style="font-size:11px;">
-            </div>
+            <input type="text" id="pUrl" placeholder="Paste Image Link (Right-click image > Copy Image Address)">
+            
             <select id="pCat">
                 <option value="Trending">Trending</option>
                 <option value="Tech">Tech</option>
@@ -116,6 +110,7 @@
             </select>
             <label style="font-size:11px; color:#555;">Trend Score: <span id="sVal" style="color:var(--primary)">9.5</span></label>
             <input type="range" id="pScore" min="0" max="10" step="0.1" value="9.5" oninput="document.getElementById('sVal').innerText=this.value">
+            
             <button id="pubBtn" style="width:100%; padding:16px; background:var(--primary); color:white; border:none; border-radius:14px; font-weight:700; margin-top:10px; cursor:pointer;">PUBLISH TO FEED</button>
             <button onclick="document.getElementById('adminBox').style.display='none'" style="width:100%; background:none; border:none; color:#444; margin-top:15px; cursor:pointer;">Discard</button>
         </div>
@@ -125,8 +120,8 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
     import { getFirestore, collection, addDoc, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-    import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
 
+    // YOUR API KEYS (LINKED TO PROJECT: findly-app-8bdf6)
     const firebaseConfig = {
         apiKey: "AIzaSyAoTFkBa7_LvMCa2JR_nqlxSg6H82sb9rI",
         authDomain: "findly-app-8bdf6.firebaseapp.com",
@@ -139,10 +134,9 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
-    const storage = getStorage(app);
     const provider = new GoogleAuthProvider();
 
-    // AUTH ENGINE (NO FLICKER)
+    // AUTH (NO FLICKER LOGIC)
     onAuthStateChanged(auth, user => {
         document.getElementById('siteLoader').style.display = 'none';
         if(user) {
@@ -158,48 +152,44 @@
 
     document.getElementById('loginBtn').onclick = () => signInWithPopup(auth, provider);
 
-    // DYNAMIC DATA ACTIONS
+    // DYNAMIC FILTERING
     window.filterData = (cat, el) => {
         document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active'));
         el.classList.add('active');
         load(cat);
     };
 
+    // PRO SEARCH (TITLES + TAGS + DESC)
     document.getElementById('siteSearch').oninput = (e) => {
         const val = e.target.value.toLowerCase();
         document.querySelectorAll('.pin').forEach(p => {
-            const data = p.getAttribute('data-search').toLowerCase();
-            p.style.display = data.includes(val) ? 'block' : 'none';
+            const searchData = p.getAttribute('data-search').toLowerCase();
+            p.style.display = searchData.includes(val) ? 'block' : 'none';
         });
     };
 
+    // PUBLISH (STORES IN FIRESTORE CLOUD)
     document.getElementById('pubBtn').onclick = async () => {
         const btn = document.getElementById('pubBtn');
-        const file = document.getElementById('pFile').files[0];
-        const urlIn = document.getElementById('pUrl').value;
-        if(!document.getElementById('pTitle').value) return alert("Title required!");
-        
-        btn.innerText = "Publishing Elite...";
-        let img = urlIn;
-        if(file) {
-            const imgRef = ref(storage, `elite-finds/${Date.now()}_${file.name}`);
-            await uploadBytes(imgRef, file);
-            img = await getDownloadURL(imgRef);
-        }
+        const imgUrl = document.getElementById('pUrl').value;
+        const title = document.getElementById('pTitle').value;
+        if(!imgUrl || !title) return alert("Title and Image URL are required!");
 
+        btn.innerText = "Publishing Pro...";
         await addDoc(collection(db, "discoveries"), {
-            name: document.getElementById('pTitle').value,
+            name: title,
             desc: document.getElementById('pAbout').value,
             tags: document.getElementById('pTags').value,
             link: document.getElementById('pLink').value,
             category: document.getElementById('pCat').value,
             score: document.getElementById('pScore').value,
-            imageUrl: img,
+            imageUrl: imgUrl,
             time: Date.now()
         });
         location.reload();
     };
 
+    // LOAD (RETRIEVES FROM FIRESTORE CLOUD)
     async function load(catFilter) {
         const q = query(collection(db, "discoveries"), orderBy("time", "desc"));
         const snap = await getDocs(q);

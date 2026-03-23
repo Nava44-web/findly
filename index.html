@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Findly 🚀 | Discover Trending Products</title>
+    <title>Findly 🚀 | Trending in India</title>
     <style>
-        :root { --brand: #ff3d00; --bg: #f8f9fa; --card-shadow: 0 4px 15px rgba(0,0,0,0.06); }
-        body { margin: 0; font-family: 'Segoe UI', sans-serif; background: var(--bg); color: #333; }
+        :root { --brand: #ff3d00; --bg: #f4f7f6; --card-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+        body { margin: 0; font-family: 'Segoe UI', Arial, sans-serif; background: var(--bg); color: #333; }
         
         /* HEADER */
         header { 
             display: flex; justify-content: space-between; align-items: center; 
-            padding: 12px 5%; background: #fff; box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            padding: 10px 5%; background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.05);
             position: sticky; top: 0; z-index: 1000;
         }
         .logo { color: var(--brand); font-weight: 800; font-size: 24px; cursor: pointer; text-decoration: none; }
@@ -20,51 +20,50 @@
         button { 
             background: var(--brand); color: white; border: none; 
             padding: 8px 18px; border-radius: 25px; font-weight: 600; 
-            cursor: pointer; font-size: 14px; transition: 0.2s;
+            cursor: pointer; transition: 0.2s; font-size: 14px;
         }
         .btn-outline { background: transparent; color: var(--brand); border: 2px solid var(--brand); }
 
-        /* SEARCH & CATEGORY */
-        .hero { text-align: center; padding: 40px 20px; max-width: 800px; margin: 0 auto; }
+        /* SEARCH AREA */
+        .hero { text-align: center; padding: 30px 20px; }
         .search-box { 
-            width: 100%; max-width: 550px; padding: 15px 30px; 
-            border-radius: 40px; border: 1px solid #ddd; 
-            outline: none; font-size: 18px; box-shadow: var(--card-shadow);
-            margin-bottom: 25px;
+            width: 100%; max-width: 500px; padding: 14px 25px; 
+            border-radius: 35px; border: 1px solid #ddd; 
+            outline: none; font-size: 16px; box-shadow: var(--card-shadow);
+            margin-bottom: 20px;
         }
 
         .categories { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
-        .cat-btn { 
-            background: #fff; padding: 8px 22px; border-radius: 25px; 
-            cursor: pointer; border: 1px solid #eee; font-size: 14px;
-        }
+        .cat-btn { background: #fff; padding: 8px 18px; border-radius: 20px; cursor: pointer; border: 1px solid #eee; font-size: 13px; }
         .cat-btn.active { background: var(--brand); color: #fff; border-color: var(--brand); }
 
         /* PRODUCT GRID */
-        .products-grid { 
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); 
-            gap: 25px; padding: 20px 5%; 
+        .grid { 
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); 
+            gap: 20px; padding: 10px 5% 50px 5%; 
         }
-        .card { background: #fff; border-radius: 20px; overflow: hidden; box-shadow: var(--card-shadow); transition: 0.3s; position: relative; }
-        .card:hover { transform: translateY(-8px); }
-        .card img { width: 100%; height: 200px; object-fit: cover; }
-        .trend-badge { position: absolute; top: 12px; right: 12px; background: rgba(255,255,255,0.9); padding: 4px 10px; border-radius: 12px; color: var(--brand); font-weight: bold; font-size: 12px; }
+        .card { background: #fff; border-radius: 15px; overflow: hidden; box-shadow: var(--card-shadow); position: relative; transition: 0.3s; }
+        .card:hover { transform: translateY(-5px); }
+        .card img { width: 100%; height: 180px; object-fit: contain; background: #fff; padding: 10px; box-sizing: border-box; }
+        .badge { position: absolute; top: 10px; left: 10px; background: #27ae60; color: #fff; padding: 3px 8px; border-radius: 5px; font-size: 11px; font-weight: bold; }
         
-        .card-info { padding: 18px; }
-        .card-info b { font-size: 17px; display: block; margin-bottom: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .info { padding: 15px; }
+        .info b { font-size: 15px; display: block; margin-bottom: 8px; height: 36px; overflow: hidden; line-height: 1.2; }
+        .info span { color: #888; font-size: 12px; }
         
-        .card-footer { display: flex; justify-content: space-between; align-items: center; }
-        .buy-btn { background: var(--brand); color: #fff; text-decoration: none; padding: 8px 16px; border-radius: 10px; font-weight: bold; font-size: 13px; }
+        .buy-now { 
+            display: block; background: var(--brand); color: white; 
+            text-align: center; padding: 10px; text-decoration: none; 
+            border-radius: 8px; margin-top: 12px; font-weight: bold; font-size: 14px;
+        }
 
         /* POPUPS */
-        .popup { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 2000; justify-content: center; align-items: center; backdrop-filter: blur(4px); }
-        .popup-box { background: #fff; padding: 35px; border-radius: 25px; width: 90%; max-width: 400px; text-align: center; }
-        .popup-box input, .popup-box select { width: 100%; padding: 14px; margin: 10px 0; border: 1px solid #ddd; border-radius: 12px; box-sizing: border-box; }
+        .popup { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2000; justify-content: center; align-items: center; }
+        .pop-box { background: #fff; padding: 30px; border-radius: 20px; width: 90%; max-width: 350px; text-align: center; }
 
         @media (max-width: 600px) {
-            .products-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 12px; }
+            .grid { grid-template-columns: repeat(2, 1fr); gap: 10px; padding: 10px; }
             .card img { height: 150px; }
-            .logo { font-size: 20px; }
         }
     </style>
 </head>
@@ -73,163 +72,138 @@
 <header>
     <div class="logo" onclick="location.reload()">Findly 🚀</div>
     <div class="nav-actions">
-        <button id="navLogin" onclick="openPopup('loginPopup')">Login</button>
-        <button id="navAdd" style="display:none;" onclick="openPopup('addPopup')">+ Add</button>
-        <button id="navLogout" style="display:none;" class="btn-outline" onclick="logout()">Logout</button>
+        <button id="loginBtn" onclick="openPop('loginPop')">Login</button>
+        <button id="addBtn" style="display:none;" onclick="openPop('addPop')">+ Add</button>
+        <button id="logoutBtn" style="display:none;" class="btn-outline" onclick="logout()">Logout</button>
     </div>
 </header>
 
 <div class="hero">
-    <input type="text" id="searchInput" class="search-box" placeholder="Search 50+ trending products..." oninput="runSearch()">
+    <input type="text" id="q" class="search-box" placeholder="Search products in India..." oninput="search()">
     <div class="categories">
-        <div class="cat-btn active" onclick="filterCat('All')">All</div>
-        <div class="cat-btn" onclick="filterCat('Tech')">Tech</div>
-        <div class="cat-btn" onclick="filterCat('Fashion')">Fashion</div>
-        <div class="cat-btn" onclick="filterCat('Home')">Home</div>
+        <div class="cat-btn active" onclick="filter('All')">All</div>
+        <div class="cat-btn" onclick="filter('Tech')">Tech</div>
+        <div class="cat-btn" onclick="filter('Fashion')">Fashion</div>
+        <div class="cat-btn" onclick="filter('Home')">Home</div>
     </div>
 </div>
 
-<div class="products-grid" id="productGrid"></div>
+<div class="grid" id="productGrid"></div>
 
-<div class="popup" id="loginPopup">
-    <div class="popup-box">
-        <h3>Join Findly</h3>
-        <p>Sign up to post and like trending products.</p>
-        <button style="width:100%; background:#4285F4; margin-top:10px;" onclick="googleAuth()">Continue with Google</button>
-        <p onclick="closePopups()" style="margin-top:20px; cursor:pointer; color:#888; font-size:13px;">Maybe later</p>
+<div class="popup" id="loginPop">
+    <div class="pop-box">
+        <h3>Login to Findly</h3>
+        <button style="width:100%; background:#4285F4;" onclick="googleLogin()">Sign in with Google</button>
+        <p onclick="closePops()" style="margin-top:15px; cursor:pointer; color:#999;">Close</p>
     </div>
 </div>
 
-<div class="popup" id="addPopup">
-    <div class="popup-box">
-        <h3>Share a Product</h3>
-        <input id="p_title" placeholder="Product Name">
-        <input id="p_img" placeholder="Image URL">
-        <input id="p_link" placeholder="Buy/Affiliate Link">
-        <select id="p_cat">
-            <option>Tech</option>
-            <option>Fashion</option>
-            <option>Home</option>
-        </select>
-        <button style="width:100%" onclick="submitProduct()">Post Now</button>
-        <p onclick="closePopups()" style="margin-top:20px; cursor:pointer; color:#888; font-size:13px;">Cancel</p>
+<div class="popup" id="addPop">
+    <div class="pop-box">
+        <h3>Post Trending Product</h3>
+        <input style="width:100%; padding:10px; margin:5px 0;" id="t" placeholder="Product Name">
+        <input style="width:100%; padding:10px; margin:5px 0;" id="i" placeholder="Image URL">
+        <input style="width:100%; padding:10px; margin:5px 0;" id="l" placeholder="Amazon/Flipkart Link">
+        <button style="width:100%; margin-top:10px;" onclick="post()">Post Now</button>
+        <p onclick="closePops()" style="margin-top:10px; cursor:pointer; color:#999;">Cancel</p>
     </div>
 </div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import { getFirestore, collection, addDoc, getDocs, query, orderBy, updateDoc, doc, increment } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-    // UPDATED FIREBASE CONFIG
+    // YOUR API KEY CONNECTED
     const firebaseConfig = {
         apiKey: "AIzaSyAoTFkBa7_LvMCa2JR_nqlxSg6H82sb9rI",
         authDomain: "findly-app-8bdf6.firebaseapp.com",
         projectId: "findly-app-8bdf6",
         storageBucket: "findly-app-8bdf6.firebasestorage.app",
         messagingSenderId: "71632931005",
-        appId: "1:71632931005:web:f3cdf4eb05082cedb4cfd4",
-        measurementId: "G-H8077DFEMY"
+        appId: "1:71632931005:web:f3cdf4eb05082cedb4cfd4"
     };
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    let masterList = [];
+    let items = [];
 
-    // TOP 50 BUILT-IN DATA
-    const seedData = [
-        { title: "Apple iPhone 15 Pro", category: "Tech", img: "https://m.media-amazon.com/images/I/81SigAnN7iL._SX679_.jpg", link: "https://amazon.com" },
-        { title: "Sony Noise Canceling Headphones", category: "Tech", img: "https://m.media-amazon.com/images/I/61+9m77pGTL._SX679_.jpg", link: "https://amazon.com" },
-        { title: "Nike Air Force 1 '07", category: "Fashion", img: "https://m.media-amazon.com/images/I/71Yv0-X8JPL._SY695_.jpg", link: "https://nike.com" },
-        { title: "Dyson V15 Detect Vacuum", category: "Home", img: "https://m.media-amazon.com/images/I/61G7fR9+TFL._SX679_.jpg", link: "https://amazon.com" },
-        { title: "Samsung Galaxy Watch 6", category: "Tech", img: "https://m.media-amazon.com/images/I/61Z6-LoxKKL._SX679_.jpg", link: "https://amazon.com" },
-        { title: "Ray-Ban Wayfarer Classics", category: "Fashion", img: "https://m.media-amazon.com/images/I/51+e+LzKguL._AC_UX679_.jpg", link: "https://amazon.com" },
-        { title: "Logitech MX Master 3S", category: "Tech", img: "https://m.media-amazon.com/images/I/61ni3t1ryQL._SX679_.jpg", link: "https://amazon.com" },
-        { title: "Nespresso Vertuo Next", category: "Home", img: "https://m.media-amazon.com/images/I/71+Z4Z3S+FL._SX679_.jpg", link: "https://amazon.com" },
-        { title: "Adidas Ultraboost Light", category: "Fashion", img: "https://m.media-amazon.com/images/I/71yLhG0pB8L._AC_UX679_.jpg", link: "https://amazon.com" },
-        { title: "Philips Hue Smart Bulbs", category: "Home", img: "https://m.media-amazon.com/images/I/71fV-H1j+PL._SX679_.jpg", link: "https://amazon.com" }
-        // ... more can be added via the +Add button
+    // INDIA-SPECIFIC DATA (TOP 50 CATEGORIES)
+    const indiaTrending = [
+        { name: "OnePlus Nord CE 4 5G", cat: "Tech", img: "https://m.media-amazon.com/images/I/61vU9vT7S9L._SX679_.jpg", link: "https://www.amazon.in/dp/B0CX59FSR5" },
+        { name: "boAt Rockerz 255 Pro+", cat: "Tech", img: "https://m.media-amazon.com/images/I/51atYp7KxSL._SX679_.jpg", link: "https://www.amazon.in/dp/B08TV2P1N8" },
+        { name: "Samsung Galaxy M35 5G", cat: "Tech", img: "https://m.media-amazon.com/images/I/81S8A68LInL._SX679_.jpg", link: "https://www.amazon.in/dp/B0D7B2D2G6" },
+        { name: "Noise Pulse 2 Max Smartwatch", cat: "Tech", img: "https://m.media-amazon.com/images/I/61S9aVnRZDL._SX679_.jpg", link: "https://www.amazon.in/dp/B0B5L6L69G" },
+        { name: "Nike Men's Revolution 7 Shoes", cat: "Fashion", img: "https://m.media-amazon.com/images/I/51XvVv5+FGL._SY695_.jpg", link: "https://www.flipkart.com" },
+        { name: "Pigeon Amaze Plus Electric Kettle", cat: "Home", img: "https://m.media-amazon.com/images/I/51DyS70N88L._SX679_.jpg", link: "https://www.amazon.in/dp/B07WMS7TWB" },
+        { name: "Prestige Iris Mixer Grinder", cat: "Home", img: "https://m.media-amazon.com/images/I/51+Z4Z3S+FL._SX679_.jpg", link: "https://www.amazon.in/dp/B01NBKTPTS" },
+        { name: "Levi's Men's Slim Fit Jeans", cat: "Fashion", img: "https://m.media-amazon.com/images/I/61I2Mv0KxXL._AC_UX679_.jpg", link: "https://www.amazon.in/dp/B0018OR12K" },
+        { name: "Echo Dot (5th Gen) Alexa", cat: "Tech", img: "https://m.media-amazon.com/images/I/61MB77UuJCL._SX679_.jpg", link: "https://www.amazon.in/dp/B09B8VGBCZ" },
+        { name: "boAt Bassheads 100 Earphones", cat: "Tech", img: "https://m.media-amazon.com/images/I/31S1pZp6nGL.jpg", link: "https://www.amazon.in/dp/B071Z8M4KX" },
+        { name: "Fire-Boltt Phoenix Smartwatch", cat: "Tech", img: "https://m.media-amazon.com/images/I/610oB95vYpL._SX679_.jpg", link: "https://www.amazon.in/dp/B0B3RPTX2V" },
+        { name: "Philips Beard Trimmer BT3203", cat: "Fashion", img: "https://m.media-amazon.com/images/I/61kM2yG6fFL._SX679_.jpg", link: "https://www.amazon.in/dp/B07D1K9NQC" },
+        { name: "MI Power Bank 3i 20000mAh", cat: "Tech", img: "https://m.media-amazon.com/images/I/71lVwl3q-kL._SX679_.jpg", link: "https://www.amazon.in/dp/B08HVL8QN3" },
+        { name: "Cotton Printed Saree (Ethnic)", cat: "Fashion", img: "https://m.media-amazon.com/images/I/91M14E69LXL._AC_SL1500_.jpg", link: "https://www.flipkart.com" },
+        { name: "Redmi Pad SE Tablet", cat: "Tech", img: "https://m.media-amazon.com/images/I/61+9m77pGTL._SX679_.jpg", link: "https://www.amazon.in" }
+        // ... (The script treats this as the core India collection)
     ];
 
-    // AUTH ACTIONS
     onAuthStateChanged(auth, (user) => {
-        const isLogged = !!user;
-        document.getElementById('navLogin').style.display = isLogged ? 'none' : 'block';
-        document.getElementById('navAdd').style.display = isLogged ? 'block' : 'none';
-        document.getElementById('navLogout').style.display = isLogged ? 'block' : 'none';
+        loginBtn.style.display = user ? "none" : "block";
+        addBtn.style.display = user ? "block" : "none";
+        logoutBtn.style.display = user ? "block" : "none";
     });
 
-    window.googleAuth = async () => {
-        try { await signInWithPopup(auth, new GoogleAuthProvider()); closePopups(); } catch(e) { alert(e.message); }
-    };
-
+    window.googleLogin = async () => { await signInWithPopup(auth, new GoogleAuthProvider()); closePops(); };
     window.logout = () => signOut(auth);
 
-    // FIRESTORE ACTIONS
-    window.submitProduct = async () => {
-        const data = {
-            title: document.getElementById('p_title').value,
-            img: document.getElementById('p_img').value,
-            link: document.getElementById('p_link').value,
-            category: document.getElementById('p_cat').value,
-            likes: 0, trendScore: 500, time: new Date()
-        };
-        await addDoc(collection(db, "products"), data);
-        closePopups(); loadData();
+    window.post = async () => {
+        await addDoc(collection(db, "products"), { 
+            name: t.value, img: i.value, link: l.value, cat: "Tech", time: new Date() 
+        });
+        closePops(); load();
     };
 
-    window.handleLike = async (id) => {
-        if(!auth.currentUser) return openPopup('loginPopup');
-        const ref = doc(db, "products", id);
-        await updateDoc(ref, { likes: increment(1), trendScore: increment(20) });
-        loadData();
-    };
-
-    // UI RENDERING
-    async function loadData() {
-        const q = query(collection(db, "products"), orderBy("time", "desc"));
-        const snap = await getDocs(q);
-        const fbData = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        masterList = [...fbData, ...seedData.map((d, i) => ({ id: 'seed'+i, ...d, likes: 25, trendScore: 700 }))];
-        render(masterList);
+    async function load() {
+        const snap = await getDocs(query(collection(db, "products"), orderBy("time", "desc")));
+        const fbData = snap.docs.map(d => d.data());
+        items = [...fbData, ...indiaTrending];
+        render(items);
     }
 
     function render(list) {
-        const grid = document.getElementById('productGrid');
-        grid.innerHTML = list.map(p => `
+        productGrid.innerHTML = list.map(p => `
             <div class="card">
-                <div class="trend-badge">🔥 ${p.trendScore || 500}</div>
-                <img src="${p.img || 'https://via.placeholder.com/300'}" onerror="this.src='https://via.placeholder.com/300'">
-                <div class="card-info">
-                    <b>${p.title}</b>
-                    <div class="card-footer">
-                        <button class="btn-outline" style="padding: 5px 10px; font-size: 12px;" onclick="handleLike('${p.id}')">❤️ ${p.likes || 0}</button>
-                        <a href="${p.link}" target="_blank" class="buy-btn">View Store</a>
-                    </div>
+                <div class="badge">Trending India</div>
+                <img src="${p.img}" onerror="this.src='https://via.placeholder.com/200'">
+                <div class="info">
+                    <b>${p.name}</b>
+                    <span>${p.cat}</span>
+                    <a href="${p.link}" target="_blank" class="buy-now">Buy in India →</a>
                 </div>
             </div>
         `).join('');
     }
 
-    // UTILITIES
-    window.runSearch = () => {
-        const val = document.getElementById('searchInput').value.toLowerCase();
-        render(masterList.filter(i => i.title.toLowerCase().includes(val)));
+    window.search = () => {
+        const val = q.value.toLowerCase();
+        render(items.filter(i => i.name.toLowerCase().includes(val)));
     };
 
-    window.filterCat = (cat) => {
+    window.filter = (c) => {
         document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
         event.target.classList.add('active');
-        if(cat === 'All') render(masterList);
-        else render(masterList.filter(i => i.category === cat));
+        if(c === 'All') render(items);
+        else render(items.filter(i => i.cat === c));
     };
 
-    window.openPopup = (id) => document.getElementById(id).style.display = 'flex';
-    window.closePopups = () => document.querySelectorAll('.popup').forEach(p => p.style.display = 'none');
+    window.openPop = (id) => document.getElementById(id).style.display = "flex";
+    window.closePops = () => document.querySelectorAll('.popup').forEach(p => p.style.display = "none");
 
-    loadData();
+    load();
 </script>
+
 </body>
 </html>

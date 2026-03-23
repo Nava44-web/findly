@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Findly 🔥</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body{margin:0;font-family:sans-serif;background:#f9f9f9;}
+header{display:flex;justify-content:space-between;align-items:center;padding:15px;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,0.1);}
+.logo{font-size:22px;font-weight:bold;color:#ff3d00;}
+nav{display:flex;gap:10px;align-items:center;}
+nav input{padding:8px;border-radius:20px;border:1px solid #ddd;}
+button{padding:8px 15px;border:none;border-radius:20px;background:#ff3d00;color:white;cursor:pointer;}
+
+.products{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:15px;padding:15px;}
+.card{background:white;border-radius:10px;overflow:hidden;box-shadow:0 3px 10px rgba(0,0,0,0.1);}
+.card img{width:100%;height:120px;object-fit:cover;}
+.card-content{padding:10px;}
+.btn{display:block;background:#ff3d00;color:white;text-align:center;padding:8px;border-radius:20px;margin-top:8px;}
+
+#authBox{display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:white;padding:20px;border-radius:10px;box-shadow:0 5px 20px rgba(0,0,0,0.2);}
+#authBox input{display:block;width:100%;margin:8px 0;padding:8px;}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="logo">Findly 🔥</div>
+  <nav>
+    <input type="text" id="search" placeholder="Search..." oninput="searchProducts()">
+    <button onclick="showLogin()">Login</button>
+    <button onclick="showSignup()">Signup</button>
+    <button onclick="logout()">Logout</button>
+  </nav>
+</header>
+
+<div class="products" id="products"></div>
+
+<!-- AUTH BOX -->
+<div id="authBox">
+  <h3 id="authTitle">Login</h3>
+  <input id="email" placeholder="Email">
+  <input id="password" type="password" placeholder="Password">
+  <button onclick="login()">Login</button>
+  <button onclick="signup()">Signup</button>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSy...",
+  authDomain: "findly-app-8bdf6.firebaseapp.com",
+  projectId: "findly-app-8bdf6",
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+let products=[];
+
+// LOAD PRODUCTS
+async function loadProducts(){
+  const snap = await getDocs(collection(db,"products"));
+  products = snap.docs.map(doc=>doc.data());
+  display(products);
+}
+
+function display(list){
+  const box = document.getElementById("products");
+  box.innerHTML="";
+  list.forEach(p=>{
+    box.innerHTML+=`
+    <div class="card">
+      <img src="${p.img || 'https://via.placeholder.com/150'}">
+      <div class="card-content">
+        <b>${p.title}</b>
+        <p>${p.desc||""}</p>
+        <a href="${p.link}" target="_blank" class="btn">Buy</a>
+      </div>
+    </div>`;
+  });
+}
+
+// SEARCH
+window.searchProducts=function(){
+  const val=document.getElementById("search").value.toLowerCase();
+  display(products.filter(p=>p.title.toLowerCase().includes(val)));
+}
+
+// AUTH UI
+window.showLogin=()=>document.getElementById("authBox").style.display="block";
+window.showSignup=()=>document.getElementById("authBox").style.display="block";
+
+// AUTH FUNCTIONS
+window.login=async()=>{
+  const email=document.getElementById("email").value;
+  const pass=document.getElementById("password").value;
+  await signInWithEmailAndPassword(auth,email,pass);
+  alert("Logged in");
+}
+
+window.signup=async()=>{
+  const email=document.getElementById("email").value;
+  const pass=document.getElementById("password").value;
+  await createUserWithEmailAndPassword(auth,email,pass);
+  alert("Account created");
+}
+
+window.logout=()=>signOut(auth);
+
+// INIT
+loadProducts();
+</script>
+
+</body>
+</html>

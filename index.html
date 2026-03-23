@@ -1,193 +1,264 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Findly 🚀</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Findly 🚀</title>
+    <style>
+        :root { --brand: #ff3d00; --bg: #f8f9fa; }
+        body { margin: 0; font-family: 'Segoe UI', sans-serif; background: var(--bg); color: #333; }
+        
+        /* HEADER SECTION */
+        header { 
+            display: flex; justify-content: space-between; align-items: center; 
+            padding: 10px 5%; background: #fff; box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky; top: 0; z-index: 1000;
+        }
+        .logo { color: var(--brand); font-weight: 800; font-size: 22px; cursor: pointer; }
+        .nav-actions { display: flex; gap: 8px; }
+        
+        button { 
+            background: var(--brand); color: white; border: none; 
+            padding: 8px 15px; border-radius: 20px; font-weight: 600; 
+            cursor: pointer; font-size: 14px; transition: 0.3s;
+        }
+        .btn-outline { background: transparent; color: var(--brand); border: 1px solid var(--brand); }
 
-<style>
-body{margin:0;font-family:sans-serif;background:#f5f7fa;}
-header{display:flex;justify-content:space-between;padding:10px;background:#fff;}
-.logo{color:#ff3d00;font-weight:bold;}
-button{background:#ff3d00;color:white;border:none;padding:6px 12px;border-radius:20px;}
-.search{display:flex;justify-content:center;margin:15px;}
-.search input{width:60%;padding:10px;border-radius:20px;text-align:center;}
+        /* SEARCH & CATEGORY (CENTERED) */
+        .hero { text-align: center; padding: 30px 20px; }
+        .search-container { 
+            display: flex; justify-content: center; margin-bottom: 25px; 
+        }
+        #mainSearch { 
+            width: 100%; max-width: 500px; padding: 12px 25px; 
+            border-radius: 30px; border: 1px solid #ddd; 
+            outline: none; font-size: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
 
-.categories{display:flex;justify-content:center;gap:10px;}
-.cat{background:#ff3d00;color:white;padding:5px 10px;border-radius:10px;cursor:pointer;}
+        .categories { 
+            display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; 
+        }
+        .cat-btn { 
+            background: #fff; padding: 8px 20px; border-radius: 20px; 
+            cursor: pointer; border: 1px solid #eee; font-size: 14px; transition: 0.3s;
+        }
+        .cat-btn.active { background: var(--brand); color: #fff; border-color: var(--brand); }
 
-.products{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;padding:10px;}
-.card{background:white;padding:10px;border-radius:10px;}
-.btn{display:block;background:#ff3d00;color:white;text-align:center;padding:5px;border-radius:10px;margin-top:5px;}
+        /* PRODUCT GRID */
+        .products-grid { 
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); 
+            gap: 20px; padding: 20px 5%; 
+        }
+        .card { background: #fff; border-radius: 15px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .card img { width: 100%; height: 180px; object-fit: cover; }
+        .card-info { padding: 15px; }
+        .card-info b { font-size: 16px; display: block; margin-bottom: 5px; }
+        .buy-link { 
+            display: block; background: var(--brand); color: white; 
+            text-align: center; padding: 8px; text-decoration: none; 
+            border-radius: 10px; margin-top: 10px; font-size: 14px;
+        }
 
-.popup{display:none;position:fixed;width:100%;height:100%;background:rgba(0,0,0,0.5);top:0;justify-content:center;align-items:center;}
-.popup-content{background:white;padding:20px;border-radius:10px;width:300px;}
-input{width:100%;margin:5px 0;padding:8px;}
+        /* POPUPS */
+        .popup { 
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.7); z-index: 2000; justify-content: center; align-items: center; 
+        }
+        .popup-box { 
+            background: #fff; padding: 30px; border-radius: 20px; width: 90%; max-width: 380px; 
+            position: relative; text-align: center;
+        }
+        .popup-box input, .popup-box select { 
+            width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; 
+            border-radius: 10px; box-sizing: border-box; 
+        }
+        .google-btn { 
+            background: #fff; color: #444; border: 1px solid #ddd; 
+            width: 100%; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 10px;
+        }
 
-@media(max-width:600px){
-.search input{width:90%;}
-.products{grid-template-columns:repeat(2,1fr);}
-}
-</style>
+        /* MOBILE OPTIMIZATION */
+        @media (max-width: 600px) {
+            header { padding: 10px 15px; }
+            .logo { font-size: 18px; }
+            .products-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; padding: 10px; }
+            .card img { height: 140px; }
+            #mainSearch { width: 90%; }
+        }
+    </style>
 </head>
-
 <body>
 
 <header>
-<div class="logo">Findly 🚀</div>
-<div>
-<button onclick="openLogin()">Login</button>
-<button onclick="openSignup()">Signup</button>
-<button onclick="logout()" id="logoutBtn" style="display:none;">Logout</button>
-<button onclick="openAdd()" id="addBtn" style="display:none;">+ Add</button>
-</div>
+    <div class="logo">Findly 🚀</div>
+    <div class="nav-actions">
+        <button id="navLogin" onclick="showPopup('loginPopup')">Login</button>
+        <button id="navSignup" class="btn-outline" onclick="showPopup('signupPopup')">Signup</button>
+        <button id="navAdd" style="display:none;" onclick="showPopup('addPopup')">+ Add</button>
+        <button id="navLogout" style="display:none;" class="btn-outline" onclick="handleLogout()">Logout</button>
+    </div>
 </header>
 
-<div class="search">
-<input id="search" placeholder="Search..." oninput="searchProducts()">
+<div class="hero">
+    <div class="search-container">
+        <input type="text" id="mainSearch" placeholder="Search trending products..." oninput="runSearch()">
+    </div>
+    <div class="categories" id="catList">
+        <div class="cat-btn active" onclick="runFilter('All')">All</div>
+        <div class="cat-btn" onclick="runFilter('Tech')">Tech</div>
+        <div class="cat-btn" onclick="runFilter('Fashion')">Fashion</div>
+        <div class="cat-btn" onclick="runFilter('Home')">Home</div>
+    </div>
 </div>
 
-<div class="categories">
-<div class="cat" onclick="filterCat('All')">All</div>
-<div class="cat" onclick="filterCat('Tech')">Tech</div>
-<div class="cat" onclick="filterCat('Fashion')">Fashion</div>
-</div>
+<div class="products-grid" id="displayArea"></div>
 
-<div class="products" id="products"></div>
-
-<!-- LOGIN -->
 <div class="popup" id="loginPopup">
-<div class="popup-content">
-<h3>Login</h3>
-<input id="email" placeholder="Email">
-<input id="password" type="password" placeholder="Password">
-<button onclick="login()">Login</button>
-<button onclick="googleLogin()">Login with Google</button>
-</div>
+    <div class="popup-box">
+        <h3>Sign in to Findly</h3>
+        <input type="email" id="loginEmail" placeholder="Email">
+        <input type="password" id="loginPass" placeholder="Password">
+        <button style="width:100%" onclick="emailLogin()">Login</button>
+        <hr><p>OR</p>
+        <button class="google-btn" onclick="googleAuth()">
+            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/action/google.svg" width="18"> Sign in with Google
+        </button>
+        <br><br><button class="btn-outline" onclick="closeAll()">Close</button>
+    </div>
 </div>
 
-<!-- SIGNUP -->
 <div class="popup" id="signupPopup">
-<div class="popup-content">
-<h3>Signup</h3>
-<input id="fname" placeholder="First Name">
-<input id="lname" placeholder="Last Name">
-<input id="sEmail" placeholder="Email">
-<input id="sPassword" type="password" placeholder="Password">
-<button onclick="signup()">Signup</button>
-<button onclick="googleLogin()">Signup with Google</button>
-</div>
+    <div class="popup-box">
+        <h3>Create Account</h3>
+        <input type="text" id="regName" placeholder="Full Name">
+        <input type="email" id="regEmail" placeholder="Email">
+        <input type="password" id="regPass" placeholder="Password">
+        <button style="width:100%" onclick="emailSignup()">Sign Up</button>
+        <hr><p>OR</p>
+        <button class="google-btn" onclick="googleAuth()">
+            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/action/google.svg" width="18"> Sign up with Google
+        </button>
+        <br><br><button class="btn-outline" onclick="closeAll()">Close</button>
+    </div>
 </div>
 
-<!-- ADD -->
 <div class="popup" id="addPopup">
-<div class="popup-content">
-<h3>Add Product</h3>
-<input id="img" placeholder="Image URL">
-<input id="title" placeholder="Title">
-<input id="link" placeholder="Buy Link">
-<select id="category">
-<option>Tech</option>
-<option>Fashion</option>
-</select>
-<button onclick="addProduct()">Add</button>
-</div>
+    <div class="popup-box">
+        <h3>Share New Product</h3>
+        <input type="text" id="p_img" placeholder="Image URL">
+        <input type="text" id="p_title" placeholder="Product Title">
+        <input type="text" id="p_link" placeholder="Buy Link">
+        <select id="p_cat">
+            <option>Tech</option>
+            <option>Fashion</option>
+            <option>Home</option>
+        </select>
+        <button style="width:100%" onclick="submitProduct()">Post Now</button>
+        <br><br><button class="btn-outline" onclick="closeAll()">Close</button>
+    </div>
 </div>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getFirestore, collection, addDoc, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-const firebaseConfig = {
-apiKey: "AIzaSyAoTFkBa7_LvMCa2JR_nqlxSg6H82sb9rI",
-authDomain: "findly-app-8bdf6.firebaseapp.com",
-projectId: "findly-app-8bdf6"
-};
+    const firebaseConfig = {
+        apiKey: "AIzaSyAoTFkBa7_LvMCa2JR_nqlxSg6H82sb9rI",
+        authDomain: "findly-app-8bdf6.firebaseapp.com",
+        projectId: "findly-app-8bdf6"
+    };
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
 
-let products=[];
+    let masterData = [];
 
-/* AUTH */
-onAuthStateChanged(auth,(user)=>{
-logoutBtn.style.display=user?"block":"none";
-addBtn.style.display=user?"block":"none";
-});
+    // Global Functions for Buttons
+    window.showPopup = (id) => document.getElementById(id).style.display = 'flex';
+    window.closeAll = () => document.querySelectorAll('.popup').forEach(p => p.style.display = 'none');
 
-/* GOOGLE */
-window.googleLogin=async()=>{
-const provider=new GoogleAuthProvider();
-await signInWithPopup(auth,provider);
-};
+    // Auth Change
+    onAuthStateChanged(auth, (user) => {
+        const isUser = !!user;
+        document.getElementById('navLogin').style.display = isUser ? 'none' : 'block';
+        document.getElementById('navSignup').style.display = isUser ? 'none' : 'block';
+        document.getElementById('navAdd').style.display = isUser ? 'block' : 'none';
+        document.getElementById('navLogout').style.display = isUser ? 'block' : 'none';
+    });
 
-/* LOGIN */
-window.login=async()=>{
-await signInWithEmailAndPassword(auth,email.value,password.value);
-loginPopup.style.display="none";
-};
+    // Google Login/Signup Logic
+    window.googleAuth = async () => {
+        try {
+            const provider = new GoogleAuthProvider();
+            await signInWithPopup(auth, provider);
+            closeAll();
+        } catch (e) { alert(e.message); }
+    };
 
-/* SIGNUP */
-window.signup=async()=>{
-await createUserWithEmailAndPassword(auth,sEmail.value,sPassword.value);
-signupPopup.style.display="none";
-};
+    window.emailLogin = async () => {
+        const email = document.getElementById('loginEmail').value;
+        const pass = document.getElementById('loginPass').value;
+        try { await signInWithEmailAndPassword(auth, email, pass); closeAll(); } catch(e) { alert(e.message); }
+    };
 
-/* LOGOUT */
-window.logout=()=>signOut(auth);
+    window.emailSignup = async () => {
+        const email = document.getElementById('regEmail').value;
+        const pass = document.getElementById('regPass').value;
+        try { await createUserWithEmailAndPassword(auth, email, pass); closeAll(); } catch(e) { alert(e.message); }
+    };
 
-/* ADD */
-window.addProduct=async()=>{
-await addDoc(collection(db,"products"),{
-img:img.value,
-title:title.value,
-link:link.value,
-category:category.value,
-likes:0
-});
-addPopup.style.display="none";
-loadProducts();
-};
+    window.handleLogout = () => signOut(auth);
 
-/* LOAD */
-async function loadProducts(){
-const snap=await getDocs(collection(db,"products"));
-products=snap.docs.map(d=>d.data());
-display(products);
-}
+    // Firestore Actions
+    window.submitProduct = async () => {
+        const docData = {
+            img: document.getElementById('p_img').value,
+            title: document.getElementById('p_title').value,
+            link: document.getElementById('p_link').value,
+            category: document.getElementById('p_cat').value,
+            time: new Date()
+        };
+        await addDoc(collection(db, "products"), docData);
+        closeAll();
+        loadItems();
+    };
 
-function display(list){
-productsDiv.innerHTML="";
-list.forEach(p=>{
-productsDiv.innerHTML+=`
-<div class="card">
-<img src="${p.img||'https://via.placeholder.com/150'}">
-<b>${p.title}</b>
-<small>🔥 Score: ${Math.floor(Math.random()*100)}</small>
-<a href="${p.link}" target="_blank" class="btn">Buy</a>
-</div>`;
-});
-}
+    async function loadItems() {
+        const q = query(collection(db, "products"), orderBy("time", "desc"));
+        const snap = await getDocs(q);
+        masterData = snap.docs.map(d => d.data());
+        render(masterData);
+    }
 
-window.searchProducts=()=>{
-const val=search.value.toLowerCase();
-display(products.filter(p=>p.title.toLowerCase().includes(val)));
-};
+    function render(list) {
+        const area = document.getElementById('displayArea');
+        area.innerHTML = list.map(p => `
+            <div class="card">
+                <img src="${p.img || 'https://via.placeholder.com/200'}">
+                <div class="card-info">
+                    <b>${p.title}</b>
+                    <small>Category: ${p.category}</small>
+                    <a href="${p.link}" target="_blank" class="buy-link">View Product</a>
+                </div>
+            </div>
+        `).join('');
+    }
 
-window.filterCat=(cat)=>{
-if(cat==="All") display(products);
-else display(products.filter(p=>p.category===cat));
-};
+    window.runSearch = () => {
+        const term = document.getElementById('mainSearch').value.toLowerCase();
+        render(masterData.filter(i => i.title.toLowerCase().includes(term)));
+    };
 
-window.openLogin=()=>loginPopup.style.display="flex";
-window.openSignup=()=>signupPopup.style.display="flex";
-window.openAdd=()=>addPopup.style.display="flex";
+    window.runFilter = (cat) => {
+        document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+        event.target.classList.add('active');
+        if(cat === 'All') render(masterData);
+        else render(masterData.filter(i => i.category === cat));
+    };
 
-const productsDiv=document.getElementById("products");
-
-loadProducts();
+    loadItems();
 </script>
-
 </body>
 </html>

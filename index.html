@@ -3,80 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
     <meta name="google-site-verification" content="PASTE_YOUR_CODE_HERE" />
-    <title>Findly 🚀 | AI Trend Discovery</title>
+
+    <title>Findly 🚀 | AI Product Discovery</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 
     <style>
-        :root { 
-            --primary: #ff3d00; 
-            --dark: #0a0a0a; 
-            --glass: rgba(255, 255, 255, 0.05);
-            /* Category Colors */
-            --c1: #ff3d00; --c2: #00e5ff; --c3: #ff007f; --c4: #7cfc00; --c5: #ffcc00;
-        }
-
+        :root { --primary: #ff3d00; --dark: #0a0a0a; --glass: rgba(255, 255, 255, 0.08); }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
-        body { background: var(--dark); color: white; overflow-x: hidden; }
+        body { background: var(--dark); color: white; }
 
+        /* HEADER & LOGO */
         nav {
             display: flex; justify-content: space-between; align-items: center;
-            padding: 15px 5%; background: rgba(10, 10, 10, 0.85); backdrop-filter: blur(20px);
-            position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid var(--glass);
+            padding: 15px 5%; background: rgba(10, 10, 10, 0.8); backdrop-filter: blur(15px);
+            position: sticky; top: 0; z-index: 100; border-bottom: 1px solid var(--glass);
         }
-        .logo { font-size: 26px; font-weight: 700; color: white; }
-        .logo span { color: var(--primary); font-size: 30px; }
+        .logo { font-size: 26px; font-weight: 700; display: flex; align-items: center; }
+        .logo span { color: var(--primary); margin-left: 2px; font-size: 30px; }
 
-        /* SIDEBAR CATEGORIES */
-        .container { display: grid; grid-template-columns: 260px 1fr; gap: 30px; padding: 30px 5%; }
-        
-        aside h3 { font-size: 12px; letter-spacing: 2px; color: #555; margin-bottom: 20px; }
-        .cat-link {
-            display: flex; align-items: center; padding: 12px 15px; border-radius: 12px;
-            text-decoration: none; color: #aaa; margin-bottom: 8px; transition: 0.3s;
-            border-left: 4px solid transparent; background: var(--glass);
-        }
-        .cat-link:hover { color: white; background: rgba(255,255,255,0.1); }
-        
-        /* Unique Category Colors */
-        .cat-trending { border-color: var(--c1); }
-        .cat-tech { border-color: var(--c2); }
-        .cat-fashion { border-color: var(--c3); }
-        .cat-home { border-color: var(--c4); }
-        .cat-lifestyle { border-color: var(--c5); }
-
-        /* PRODUCT GRID */
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; }
-        .card {
-            background: var(--glass); border-radius: 24px; padding: 18px;
-            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative;
-            border: 1px solid rgba(255,255,255,0.05);
-        }
-        .card:hover { transform: translateY(-10px); border-color: var(--primary); box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
-        .product-img { width: 100%; height: 200px; object-fit: cover; border-radius: 18px; }
-        .score-badge {
-            position: absolute; top: 28px; right: 28px; background: var(--primary);
-            padding: 4px 12px; border-radius: 50px; font-weight: 800; font-size: 12px;
+        /* FLOATING ADD BUTTON */
+        .add-btn {
+            position: fixed; bottom: 30px; right: 30px;
+            background: var(--primary); width: 60px; height: 60px;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-size: 30px; cursor: pointer; box-shadow: 0 10px 20px rgba(255, 61, 0, 0.3);
+            z-index: 200; border: none; color: white;
         }
 
         /* ADMIN MODAL */
         #adminModal {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.95); z-index: 9999; align-items: center; justify-content: center;
+            background: rgba(0,0,0,0.9); z-index: 300; align-items: center; justify-content: center;
         }
         .modal-content {
-            background: #111; padding: 35px; border-radius: 30px; width: 90%; max-width: 450px;
-            border: 1px solid var(--primary); max-height: 90vh; overflow-y: auto;
+            background: #1a1a1a; padding: 30px; border-radius: 20px; width: 90%; max-width: 400px;
+            border: 1px solid var(--glass);
         }
-        input, textarea, select {
-            width: 100%; padding: 14px; margin: 10px 0; background: #1a1a1a; 
-            border: 1px solid #333; color: white; border-radius: 12px; font-size: 14px;
+        input, textarea {
+            width: 100%; padding: 12px; margin: 10px 0; background: #222; border: 1px solid #444;
+            color: white; border-radius: 8px;
         }
-        .add-btn {
-            position: fixed; bottom: 40px; right: 40px; background: var(--primary);
-            width: 65px; height: 65px; border-radius: 50%; display: flex; align-items: center;
-            justify-content: center; font-size: 35px; cursor: pointer; border: none; color: white;
-            box-shadow: 0 10px 30px rgba(255, 61, 0, 0.4); z-index: 500;
+
+        /* GRID */
+        .container { display: grid; grid-template-columns: 240px 1fr; gap: 20px; padding: 20px 5%; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+
+        /* PRODUCT CARD */
+        .card {
+            background: var(--glass); border-radius: 18px; padding: 15px;
+            transition: 0.3s; position: relative; border: 1px solid transparent;
+        }
+        .card:hover { border-color: var(--primary); transform: translateY(-5px); }
+        .product-img { width: 100%; height: 180px; object-fit: cover; border-radius: 12px; }
+        .score-badge {
+            position: absolute; top: 25px; right: 25px;
+            background: var(--primary); padding: 2px 10px; border-radius: 20px; font-weight: 700; font-size: 12px;
         }
 
         @media (max-width: 768px) { .container { grid-template-columns: 1fr; } aside { display: none; } }
@@ -84,133 +67,114 @@
 </head>
 <body>
 
-<nav>
-    <div class="logo">Findly<span>✦</span></div>
-    <div id="userProfile"><button id="loginBtn" style="color:white; background:none; border:none; cursor:pointer;">Login</button></div>
-</nav>
+    <nav>
+        <div class="logo">Findly<span>✦</span></div>
+        <div id="userProfile">
+            <button id="loginBtn" style="background:transparent; border:none; color:white; cursor:pointer;">Login</button>
+        </div>
+    </nav>
 
-<div class="container">
-    <aside>
-        <h3>EXPLORE</h3>
-        <a href="#" class="cat-link cat-trending">🔥 Trending Now</a>
-        <a href="#" class="cat-link cat-tech">💻 Tech & Gadgets</a>
-        <a href="#" class="cat-link cat-fashion">👕 Fashion</a>
-        <a href="#" class="cat-link cat-home">🏠 Smart Home</a>
-        <a href="#" class="cat-link cat-lifestyle">🌟 Lifestyle</a>
-    </aside>
+    <div class="container">
+        <aside>
+            <h3 style="color:var(--primary); margin-bottom:15px;">CATEGORIES</h3>
+            <p style="margin:10px 0; color:#888;">🔥 Trending</p>
+            <p style="margin:10px 0; color:#888;">💻 Technology</p>
+            <p style="margin:10px 0; color:#888;">🏠 Home Gear</p>
+        </aside>
 
-    <main class="grid" id="productGrid">
-        </main>
-</div>
-
-<button class="add-btn" id="openModal">+</button>
-
-<div id="adminModal">
-    <div class="modal-content">
-        <h2 style="margin-bottom:20px;">Upload to <span style="color:var(--primary)">Findly</span></h2>
-        
-        <input type="text" id="pName" placeholder="Product Name">
-        <textarea id="pDesc" placeholder="Describe why it's trending..." rows="3"></textarea>
-        <input type="text" id="pLink" placeholder="Purchase Link (Amazon/Flipkart)">
-        
-        <label style="font-size:12px; color:#666;">Category</label>
-        <select id="pCategory">
-            <option value="Trending">Trending Now</option>
-            <option value="Tech">Tech & Gadgets</option>
-            <option value="Fashion">Fashion</option>
-            <option value="Home">Smart Home</option>
-            <option value="Lifestyle">Lifestyle</option>
-        </select>
-
-        <label style="font-size:12px; color:#666;">Trend Score: <span id="scoreVal" style="color:var(--primary)">9.0</span></label>
-        <input type="range" id="pScore" min="0" max="10" step="0.1" value="9.0" oninput="document.getElementById('scoreVal').innerText=this.value">
-        
-        <label style="font-size:12px; color:#666;">Product Image</label>
-        <input type="file" id="pImage" accept="image/*">
-
-        <button id="saveBtn" style="width:100%; padding:15px; background:var(--primary); color:white; border:none; border-radius:15px; font-weight:700; cursor:pointer; margin-top:15px;">PUBLISH PRODUCT</button>
-        <button onclick="document.getElementById('adminModal').style.display='none'" style="width:100%; background:none; border:none; color:#555; margin-top:10px; cursor:pointer;">Discard</button>
+        <main class="grid" id="productGrid">
+            </main>
     </div>
-</div>
 
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import { getFirestore, collection, addDoc, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-    import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
+    <button class="add-btn" id="openModal">+</button>
 
-    // PASTE YOUR FIREBASE CONFIG HERE
-    const firebaseConfig = {
-        apiKey: "YOUR_KEY",
-        authDomain: "YOUR_DOMAIN",
-        projectId: "YOUR_ID",
-        storageBucket: "YOUR_BUCKET",
-        messagingSenderId: "YOUR_SENDER",
-        appId: "YOUR_APP_ID"
-    };
+    <div id="adminModal">
+        <div class="modal-content">
+            <h2 style="color:var(--primary)">Add New Product</h2>
+            <input type="text" id="pName" placeholder="Product Name">
+            <textarea id="pDesc" placeholder="Brief Description"></textarea>
+            <input type="text" id="pLink" placeholder="Amazon/Store Link">
+            <label style="font-size:12px; color:#888;">Trend Score (0-10)</label>
+            <input type="range" id="pScore" min="0" max="10" step="0.1">
+            <label style="font-size:12px; color:#888;">Select Image from Gallery</label>
+            <input type="file" id="pImage" accept="image/*">
+            <button id="saveBtn" style="width:100%; padding:12px; background:var(--primary); border:none; color:white; border-radius:8px; font-weight:700; margin-top:10px;">Upload to Findly</button>
+            <button onclick="document.getElementById('adminModal').style.display='none'" style="width:100%; background:transparent; border:none; color:#888; margin-top:10px;">Cancel</button>
+        </div>
+    </div>
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const auth = getAuth(app);
-    const storage = getStorage(app);
-    const provider = new GoogleAuthProvider();
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
 
-    // MODAL LOGIC
-    document.getElementById('openModal').onclick = () => document.getElementById('adminModal').style.display = 'flex';
+        // CONFIG (REPLACE WITH YOURS)
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_AUTH_DOMAIN",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_STORAGE_BUCKET",
+            messagingSenderId: "YOUR_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
 
-    // LOGIN
-    document.getElementById('loginBtn').onclick = () => signInWithPopup(auth, provider);
-    onAuthStateChanged(auth, user => { if(user) document.getElementById('userProfile').innerHTML = `<span>${user.displayName.split(' ')[0]}</span>`; });
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+        const storage = getStorage(app);
+        const provider = new GoogleAuthProvider();
 
-    // SAVE & UPLOAD
-    document.getElementById('saveBtn').onclick = async () => {
-        const file = document.getElementById('pImage').files[0];
-        const name = document.getElementById('pName').value;
-        const desc = document.getElementById('pDesc').value;
-        const link = document.getElementById('pLink').value;
-        const cat = document.getElementById('pCategory').value;
-        const score = document.getElementById('pScore').value;
+        // OPEN/CLOSE MODAL
+        const modal = document.getElementById('adminModal');
+        document.getElementById('openModal').onclick = () => modal.style.display = 'flex';
 
-        if(!file || !name) return alert("Image and Name required!");
+        // LOGIN
+        document.getElementById('loginBtn').onclick = () => signInWithPopup(auth, provider);
+        onAuthStateChanged(auth, user => { if(user) document.getElementById('userProfile').innerText = user.displayName; });
 
-        const btn = document.getElementById('saveBtn');
-        btn.innerText = "Uploading...";
-        btn.disabled = true;
+        // SAVE PRODUCT
+        document.getElementById('saveBtn').onclick = async () => {
+            const file = document.getElementById('pImage').files[0];
+            const name = document.getElementById('pName').value;
+            const desc = document.getElementById('pDesc').value;
+            const link = document.getElementById('pLink').value;
+            const score = document.getElementById('pScore').value;
 
-        try {
-            const imgRef = ref(storage, `findly/${Date.now()}_${file.name}`);
+            if(!file || !name) return alert("Please add name and image!");
+
+            // 1. Upload Image to Firebase Storage
+            const imgRef = ref(storage, `products/${file.name}`);
             await uploadBytes(imgRef, file);
             const url = await getDownloadURL(imgRef);
 
+            // 2. Save Data to Firestore
             await addDoc(collection(db, "products"), {
-                name, description: desc, link, category: cat, trendScore: score, imageUrl: url, timestamp: Date.now()
+                name, description: desc, link, trendScore: score, imageUrl: url, timestamp: Date.now()
             });
-            location.reload();
-        } catch (e) { alert("Error uploading!"); btn.innerText = "PUBLISH PRODUCT"; btn.disabled = false; }
-    };
 
-    // LOAD
-    async function load() {
-        const q = query(collection(db, "products"), orderBy("timestamp", "desc"));
-        const snap = await getDocs(q);
-        const grid = document.getElementById('productGrid');
-        snap.forEach(doc => {
-            const p = doc.data();
-            grid.innerHTML += `
-                <div class="card">
-                    <span class="score-badge">${p.trendScore} AI</span>
-                    <img src="${p.imageUrl}" class="product-img">
-                    <div style="margin-top:15px;">
-                        <span style="font-size:10px; color:var(--primary); font-weight:700;">#${p.category.toUpperCase()}</span>
-                        <h3 style="margin:5px 0;">${p.name}</h3>
-                        <p style="color:#666; font-size:12px; line-height:1.4;">${p.description}</p>
-                        <a href="${p.link}" target="_blank" style="display:inline-block; margin-top:15px; color:white; background:rgba(255,255,255,0.05); padding:8px 15px; border-radius:10px; text-decoration:none; font-size:12px; font-weight:600; border:1px solid rgba(255,255,255,0.1);">Check Price →</a>
+            location.reload(); // Refresh to see new item
+        };
+
+        // LOAD PRODUCTS
+        async function load() {
+            const q = query(collection(db, "products"), orderBy("timestamp", "desc"));
+            const snap = await getDocs(q);
+            const grid = document.getElementById('productGrid');
+            snap.forEach(doc => {
+                const p = doc.data();
+                grid.innerHTML += `
+                    <div class="card">
+                        <span class="score-badge">${p.trendScore} AI</span>
+                        <img src="${p.imageUrl}" class="product-img">
+                        <h3 style="margin-top:10px;">${p.name}</h3>
+                        <p style="color:#777; font-size:13px;">${p.description}</p>
+                        <a href="${p.link}" target="_blank" style="display:block; margin-top:10px; text-decoration:none; color:var(--primary); font-weight:600;">Check Details →</a>
                     </div>
-                </div>
-            `;
-        });
-    }
-    load();
-</script>
+                `;
+            });
+        }
+        load();
+    </script>
 </body>
 </html>

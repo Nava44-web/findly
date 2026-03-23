@@ -8,7 +8,7 @@
         :root { --brand: #ff3d00; --bg: #f4f7f6; --white: #ffffff; }
         body { margin: 0; font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: #333; overflow-x: hidden; }
         
-        /* HEADER */
+        /* HEADER & NAV */
         header { 
             display: flex; justify-content: space-between; align-items: center; 
             padding: 12px 5%; background: var(--white); box-shadow: 0 2px 10px rgba(0,0,0,0.05);
@@ -16,14 +16,17 @@
         }
         .logo { color: var(--brand); font-weight: 800; font-size: 24px; cursor: pointer; }
         
+        /* FIX: Side-by-Side Buttons */
+        .nav-actions { display: flex; align-items: center; gap: 10px; }
+        
         button { 
             background: var(--brand); color: white; border: none; 
-            padding: 10px 20px; border-radius: 25px; font-weight: 600; 
-            cursor: pointer; transition: 0.3s; font-size: 14px;
+            padding: 10px 18px; border-radius: 25px; font-weight: 600; 
+            cursor: pointer; transition: 0.3s; font-size: 13px; white-space: nowrap;
         }
         .btn-outline { background: transparent; color: var(--brand); border: 2px solid var(--brand); }
 
-        /* HERO & SEARCH */
+        /* SEARCH & HERO */
         .hero { text-align: center; padding: 30px 20px; background: var(--white); margin-bottom: 20px; }
         .search-box { 
             width: 100%; max-width: 500px; padding: 15px 25px; 
@@ -32,41 +35,37 @@
             margin-bottom: 20px;
         }
 
-        .categories { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
-        .cat-btn { background: #eee; padding: 8px 18px; border-radius: 20px; cursor: pointer; border: none; font-size: 13px; font-weight: 600; }
+        .categories { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }
+        .cat-btn { background: #eee; padding: 8px 16px; border-radius: 20px; cursor: pointer; border: none; font-size: 12px; font-weight: 600; }
         .cat-btn.active { background: var(--brand); color: white; }
 
-        /* PRODUCT GRID */
+        /* GRID */
         .grid { 
             display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); 
-            gap: 25px; padding: 20px 5%; min-height: 400px;
+            gap: 25px; padding: 20px 5%; 
         }
         .card { background: var(--white); border-radius: 20px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.05); position: relative; transition: 0.3s; display: flex; flex-direction: column; }
-        .card:hover { transform: translateY(-5px); }
         .card img { width: 100%; height: 200px; object-fit: contain; background: #fff; padding: 10px; }
-        .ai-score { position: absolute; top: 10px; right: 10px; background: rgba(255,255,255,0.9); padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 800; color: var(--brand); border: 1px solid #eee; }
+        .ai-score { position: absolute; top: 10px; right: 10px; background: rgba(255,255,255,0.9); padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 800; color: var(--brand); border: 1px solid #eee; }
         
         .info { padding: 15px; flex-grow: 1; }
         .info b { font-size: 16px; display: block; margin-bottom: 5px; height: 40px; overflow: hidden; }
-        .info p { font-size: 12px; color: #666; margin: 5px 0 15px 0; height: 32px; overflow: hidden; }
+        .info p { font-size: 12px; color: #666; margin-bottom: 15px; height: 32px; overflow: hidden; }
         
-        .buy-btn { 
-            display: block; background: var(--brand); color: white; 
-            text-align: center; padding: 12px; text-decoration: none; 
-            border-radius: 12px; font-weight: bold; font-size: 14px;
-        }
+        .buy-btn { display: block; background: var(--brand); color: white; text-align: center; padding: 10px; text-decoration: none; border-radius: 10px; font-weight: bold; font-size: 13px; }
 
         /* POPUPS */
         .popup { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 2000; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
-        .pop-box { background: var(--white); padding: 30px; border-radius: 25px; width: 90%; max-width: 400px; max-height: 90vh; overflow-y: auto; position: relative; }
-        .pop-box h3 { margin-top: 0; color: var(--brand); }
-        input, select, textarea { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 12px; box-sizing: border-box; font-family: inherit; }
-        .file-input-label { display: block; background: #f0f0f0; padding: 10px; border-radius: 10px; border: 2px dashed #ccc; cursor: pointer; font-size: 13px; margin: 10px 0; }
+        .pop-box { background: var(--white); padding: 30px; border-radius: 25px; width: 90%; max-width: 380px; position: relative; }
+        input, select, textarea { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 10px; box-sizing: border-box; font-size: 14px; }
+        .file-label { display: block; background: #f9f9f9; padding: 10px; border-radius: 10px; border: 2px dashed #ddd; cursor: pointer; font-size: 12px; margin: 5px 0; text-align: center; }
 
         @media (max-width: 600px) {
-            .grid { grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 12px; }
-            .card img { height: 160px; }
-            .logo { font-size: 20px; }
+            header { padding: 10px 15px; }
+            .nav-actions { gap: 5px; }
+            button { padding: 8px 12px; font-size: 11px; }
+            .grid { grid-template-columns: repeat(2, 1fr); gap: 10px; padding: 10px; }
+            .card img { height: 150px; }
         }
     </style>
 </head>
@@ -75,15 +74,17 @@
 <header>
     <div class="logo" onclick="location.reload()">Findly 🚀</div>
     <div class="nav-actions">
-        <button id="loginBtn" onclick="togglePop('loginPop', true)">Login</button>
+        <button id="showLogin" onclick="togglePop('loginPop', true)">Login</button>
+        <button id="showSignup" class="btn-outline" onclick="togglePop('signupPop', true)">Signup</button>
+        
         <button id="addBtn" style="display:none;" onclick="togglePop('addPop', true)">+ Add</button>
-        <button id="logoutBtn" style="display:none;" class="btn-outline" onclick="logout()">Logout</button>
+        <button id="logoutBtn" style="display:none;" class="btn-outline" onclick="handleLogout()">Logout</button>
     </div>
 </header>
 
 <div class="hero">
-    <input type="text" id="searchInput" class="search-box" placeholder="Search trending products in India..." oninput="runSearch()">
-    <div class="categories" id="catBar">
+    <input type="text" id="searchInput" class="search-box" placeholder="Search products..." oninput="runSearch()">
+    <div class="categories">
         <button class="cat-btn active" onclick="filterBy('All')">All</button>
         <button class="cat-btn" onclick="filterBy('Tech')">Tech</button>
         <button class="cat-btn" onclick="filterBy('Fashion')">Fashion</button>
@@ -91,32 +92,39 @@
     </div>
 </div>
 
-<div class="grid" id="productGrid">
+<div class="grid" id="productGrid"></div>
+
+<div class="popup" id="signupPop">
+    <div class="pop-box">
+        <h3>Create Account</h3>
+        <input type="email" id="sEmail" placeholder="Email Address">
+        <input type="password" id="sPass" placeholder="Password">
+        <button style="width:100%; margin-top:10px;" onclick="handleSignup()">Sign Up</button>
+        <p onclick="togglePop('signupPop', false)" style="margin-top:15px; cursor:pointer; color:#999; font-size:12px;">Close</p>
     </div>
+</div>
 
 <div class="popup" id="loginPop">
     <div class="pop-box">
-        <h3>Welcome to Findly</h3>
-        <p>Sign in with Google to start sharing products.</p>
-        <button style="width:100%; background:#4285F4; padding: 15px;" onclick="googleLogin()">Continue with Google</button>
-        <p onclick="togglePop('loginPop', false)" style="margin-top:20px; cursor:pointer; color:#999; font-size:13px;">Close</p>
+        <h3>Login</h3>
+        <input type="email" id="lEmail" placeholder="Email Address">
+        <input type="password" id="lPass" placeholder="Password">
+        <button style="width:100%; margin-top:10px;" onclick="handleLogin()">Login</button>
+        <p onclick="togglePop('loginPop', false)" style="margin-top:15px; cursor:pointer; color:#999; font-size:12px;">Close</p>
     </div>
 </div>
 
 <div class="popup" id="addPop">
     <div class="pop-box">
-        <h3>Add Trending Product</h3>
-        <input id="p_name" placeholder="Product Name (e.g. boAt Nirvana)">
+        <h3>Post Trending Product</h3>
+        <input id="p_name" placeholder="Product Name">
         <textarea id="p_desc" placeholder="Brief Description" rows="2"></textarea>
         
-        <label class="file-input-label">
-            📷 Upload from Gallery
-            <input type="file" id="p_file" accept="image/*" style="display:none;" onchange="handleFile(this)">
-        </label>
-        <p style="font-size: 11px; color: #888; margin: 0;">-- OR --</p>
-        <input id="p_url" placeholder="Paste Image URL">
+        <label class="file-label" id="fileLabel">📷 Gallery Upload (Optional)</label>
+        <input type="file" id="p_file" accept="image/*" style="display:none;" onchange="handleFile(this)">
         
-        <input id="p_link" placeholder="Affiliate / Store Link">
+        <input id="p_url" placeholder="OR Paste Image URL">
+        <input id="p_link" placeholder="Amazon/Flipkart Link">
         
         <select id="p_cat">
             <option value="Tech">Tech</option>
@@ -124,14 +132,14 @@
             <option value="Home">Home</option>
         </select>
 
-        <button id="submitBtn" style="width:100%; margin-top:15px;" onclick="postProduct()">Post Product</button>
-        <p onclick="togglePop('addPop', false)" style="margin-top:15px; cursor:pointer; color:#999; font-size:12px;">Cancel</p>
+        <button id="postBtn" style="width:100%; margin-top:10px;" onclick="postProduct()">Post Now</button>
+        <p onclick="togglePop('addPop', false)" style="margin-top:10px; cursor:pointer; color:#999; font-size:12px;">Cancel</p>
     </div>
 </div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
     import { getFirestore, collection, addDoc, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     const firebaseConfig = {
@@ -147,118 +155,105 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    let masterItems = [];
-    let uploadedImageBase64 = "";
+    let masterList = [];
+    let galleryImg = "";
 
-    // AUTH LISTENER
+    // AUTH OBSERVER
     onAuthStateChanged(auth, (user) => {
-        document.getElementById('loginBtn').style.display = user ? "none" : "block";
-        document.getElementById('addBtn').style.display = user ? "block" : "none";
-        document.getElementById('logoutBtn').style.display = user ? "block" : "none";
+        const isUser = !!user;
+        document.getElementById('showLogin').style.display = isUser ? 'none' : 'block';
+        document.getElementById('showSignup').style.display = isUser ? 'none' : 'block';
+        document.getElementById('addBtn').style.display = isUser ? 'block' : 'none';
+        document.getElementById('logoutBtn').style.display = isUser ? 'block' : 'none';
     });
 
-    window.googleLogin = async () => { try { await signInWithPopup(auth, new GoogleAuthProvider()); togglePop('loginPop', false); } catch(e){alert(e.message)} };
-    window.logout = () => signOut(auth);
-
-    // IMAGE FILE HANDLER
-    window.handleFile = (input) => {
-        const file = input.files[0];
-        const reader = new FileReader();
-        reader.onloadend = () => { 
-            uploadedImageBase64 = reader.result;
-            document.querySelector('.file-input-label').innerText = "✅ Image Selected";
-        };
-        if(file) reader.readAsDataURL(file);
+    // AUTH ACTIONS
+    window.handleSignup = async () => {
+        try { await createUserWithEmailAndPassword(auth, sEmail.value, sPass.value); togglePop('signupPop', false); }
+        catch(e) { alert("Error: " + e.message); }
     };
 
-    // POST PRODUCT
+    window.handleLogin = async () => {
+        try { await signInWithEmailAndPassword(auth, lEmail.value, lPass.value); togglePop('loginPop', false); }
+        catch(e) { alert("Invalid credentials"); }
+    };
+
+    window.handleLogout = () => signOut(auth);
+
+    // FILE HANDLING
+    document.getElementById('fileLabel').onclick = () => document.getElementById('p_file').click();
+    window.handleFile = (input) => {
+        const reader = new FileReader();
+        reader.onload = () => { galleryImg = reader.result; document.getElementById('fileLabel').innerText = "✅ Selected"; };
+        if(input.files[0]) reader.readAsDataURL(input.files[0]);
+    };
+
+    // PRODUCT SUBMISSION
     window.postProduct = async () => {
-        const name = document.getElementById('p_name').value;
-        const desc = document.getElementById('p_desc').value;
-        const link = document.getElementById('p_link').value;
-        const cat = document.getElementById('p_cat').value;
-        const imgUrl = document.getElementById('p_url').value;
-        const finalImg = uploadedImageBase64 || imgUrl;
+        const name = p_name.value;
+        const link = p_link.value;
+        const img = galleryImg || p_url.value;
+        
+        if(!name || !link || !img) return alert("Fill Name, Link and Image!");
 
-        if(!name || !link || !finalImg) return alert("Please fill all fields and add an image!");
-
-        const btn = document.getElementById('submitBtn');
+        const btn = document.getElementById('postBtn');
         btn.innerText = "Posting...";
         btn.disabled = true;
 
-        // AI Trend Score Logic (Simulated)
-        const aiScore = Math.floor(Math.random() * 300) + 600 + (name.length * 2);
+        const aiTrend = Math.floor(Math.random() * 200) + 700;
 
         try {
             await addDoc(collection(db, "products"), {
-                name, desc, link, cat, 
-                img: finalImg, 
-                trend: aiScore,
-                time: new Date()
+                name, desc: p_desc.value, link, img, cat: p_cat.value, trend: aiTrend, time: new Date()
             });
-            
-            // Reset Form
-            document.getElementById('p_name').value = "";
-            document.getElementById('p_desc').value = "";
-            document.getElementById('p_url').value = "";
-            uploadedImageBase64 = "";
-            document.querySelector('.file-input-label').innerText = "📷 Upload from Gallery";
-            
+            // Reset
+            p_name.value = p_desc.value = p_url.value = p_link.value = galleryImg = "";
+            document.getElementById('fileLabel').innerText = "📷 Gallery Upload (Optional)";
             togglePop('addPop', false);
-            btn.innerText = "Post Product";
+            btn.innerText = "Post Now";
             btn.disabled = false;
-            loadProducts(); // Refresh grid without full reload
+            loadItems();
         } catch(e) { alert(e.message); btn.disabled = false; }
     };
 
-    // LOAD DATA
-    async function loadProducts() {
+    // RENDER & LOAD
+    async function loadItems() {
         const q = query(collection(db, "products"), orderBy("time", "desc"));
         const snap = await getDocs(q);
-        masterItems = snap.docs.map(d => d.data());
-        
-        // If Firebase is empty, show a welcome message or default data
-        if(masterItems.length === 0) {
-            document.getElementById('productGrid').innerHTML = "<p style='grid-column: 1/-1; text-align:center;'>No products yet. Be the first to add one!</p>";
-            return;
-        }
-        render(masterItems);
+        masterList = snap.docs.map(d => d.data());
+        render(masterList);
     }
 
     function render(list) {
         const grid = document.getElementById('productGrid');
         grid.innerHTML = list.map(p => `
             <div class="card">
-                <div class="ai-score">🤖 AI Trend: ${p.trend || 750}</div>
-                <img src="${p.img}" onerror="this.src='https://via.placeholder.com/300?text=No+Image'">
+                <div class="ai-score">🤖 AI Trend: ${p.trend}</div>
+                <img src="${p.img}" onerror="this.src='https://via.placeholder.com/300'">
                 <div class="info">
                     <b>${p.name}</b>
-                    <p>${p.desc || "No description provided."}</p>
-                    <span>Category: ${p.cat}</span>
-                    <a href="${p.link}" target="_blank" class="buy-btn">View on Store →</a>
+                    <p>${p.desc || ""}</p>
+                    <a href="${p.link}" target="_blank" class="buy-btn">View Deal →</a>
                 </div>
             </div>
         `).join('');
     }
 
-    // SEARCH & FILTER
     window.runSearch = () => {
-        const val = document.getElementById('searchInput').value.toLowerCase();
-        render(masterItems.filter(i => i.name.toLowerCase().includes(val) || i.cat.toLowerCase().includes(val)));
+        const val = searchInput.value.toLowerCase();
+        render(masterList.filter(i => i.name.toLowerCase().includes(val)));
     };
 
     window.filterBy = (cat) => {
         document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
         event.target.classList.add('active');
-        if(cat === 'All') render(masterItems);
-        else render(masterItems.filter(i => i.cat === cat));
+        if(cat === 'All') render(masterList);
+        else render(masterList.filter(i => i.cat === cat));
     };
 
-    // UI UTILS
     window.togglePop = (id, show) => { document.getElementById(id).style.display = show ? "flex" : "none"; };
 
-    loadProducts();
+    loadItems();
 </script>
-
 </body>
 </html>

@@ -3,165 +3,176 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Findly 🚀</title>
+    <title>Findly 🚀 | Trending Discovery</title>
     <style>
-        :root { --brand: #ff3d00; --bg: #f8f9fa; }
-        body { margin: 0; font-family: 'Segoe UI', sans-serif; background: var(--bg); color: #333; }
+        :root { --brand: #ff3d00; --bg: #f8f9fa; --card-shadow: 0 4px 15px rgba(0,0,0,0.06); }
+        body { margin: 0; font-family: 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: #333; }
         
-        /* HEADER SECTION */
+        /* HEADER & NAVIGATION */
         header { 
             display: flex; justify-content: space-between; align-items: center; 
-            padding: 10px 5%; background: #fff; box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            padding: 12px 5%; background: #fff; box-shadow: 0 2px 10px rgba(0,0,0,0.05);
             position: sticky; top: 0; z-index: 1000;
         }
-        .logo { color: var(--brand); font-weight: 800; font-size: 22px; cursor: pointer; }
-        .nav-actions { display: flex; gap: 8px; }
+        .logo { color: var(--brand); font-weight: 800; font-size: 24px; cursor: pointer; text-decoration: none; }
+        .nav-actions { display: flex; gap: 10px; align-items: center; }
         
         button { 
             background: var(--brand); color: white; border: none; 
-            padding: 8px 15px; border-radius: 20px; font-weight: 600; 
-            cursor: pointer; font-size: 14px; transition: 0.3s;
+            padding: 8px 18px; border-radius: 25px; font-weight: 600; 
+            cursor: pointer; font-size: 14px; transition: 0.2s;
         }
-        .btn-outline { background: transparent; color: var(--brand); border: 1px solid var(--brand); }
+        button:hover { opacity: 0.9; transform: translateY(-1px); }
+        .btn-outline { background: transparent; color: var(--brand); border: 2px solid var(--brand); }
+        .user-pill { background: #eee; color: #555; padding: 5px 15px; border-radius: 20px; font-size: 12px; font-weight: bold; }
 
-        /* SEARCH & CATEGORY (CENTERED) */
-        .hero { text-align: center; padding: 30px 20px; }
-        .search-container { 
-            display: flex; justify-content: center; margin-bottom: 25px; 
+        /* CENTERED HERO SECTION */
+        .hero { text-align: center; padding: 40px 20px; max-width: 800px; margin: 0 auto; }
+        .search-box { 
+            width: 100%; max-width: 550px; padding: 15px 30px; 
+            border-radius: 40px; border: 1px solid #ddd; 
+            outline: none; font-size: 18px; box-shadow: var(--card-shadow);
+            margin-bottom: 25px; transition: 0.3s;
         }
-        #mainSearch { 
-            width: 100%; max-width: 500px; padding: 12px 25px; 
-            border-radius: 30px; border: 1px solid #ddd; 
-            outline: none; font-size: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-        }
+        .search-box:focus { border-color: var(--brand); box-shadow: 0 4px 20px rgba(255, 61, 0, 0.15); }
 
-        .categories { 
-            display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; 
-        }
+        .categories { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
         .cat-btn { 
-            background: #fff; padding: 8px 20px; border-radius: 20px; 
-            cursor: pointer; border: 1px solid #eee; font-size: 14px; transition: 0.3s;
+            background: #fff; padding: 8px 22px; border-radius: 25px; 
+            cursor: pointer; border: 1px solid #eee; font-size: 14px; font-weight: 500;
         }
         .cat-btn.active { background: var(--brand); color: #fff; border-color: var(--brand); }
 
         /* PRODUCT GRID */
         .products-grid { 
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); 
-            gap: 20px; padding: 20px 5%; 
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); 
+            gap: 25px; padding: 20px 5%; 
         }
-        .card { background: #fff; border-radius: 15px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-        .card img { width: 100%; height: 180px; object-fit: cover; }
-        .card-info { padding: 15px; }
-        .card-info b { font-size: 16px; display: block; margin-bottom: 5px; }
-        .buy-link { 
-            display: block; background: var(--brand); color: white; 
-            text-align: center; padding: 8px; text-decoration: none; 
-            border-radius: 10px; margin-top: 10px; font-size: 14px;
+        .card { background: #fff; border-radius: 20px; overflow: hidden; box-shadow: var(--card-shadow); transition: 0.3s; position: relative; }
+        .card:hover { transform: translateY(-8px); }
+        .card img { width: 100%; height: 200px; object-fit: cover; }
+        
+        .trend-badge { 
+            position: absolute; top: 12px; right: 12px; background: rgba(255,255,255,0.95); 
+            padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 800; color: var(--brand);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
+
+        .card-info { padding: 18px; }
+        .card-info b { font-size: 17px; display: block; margin-bottom: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        
+        .card-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 15px; }
+        .like-btn { background: #fff5f2; color: var(--brand); border: none; padding: 6px 12px; border-radius: 10px; display: flex; align-items: center; gap: 5px; }
+        .buy-btn { background: var(--brand); color: #fff; text-decoration: none; padding: 7px 15px; border-radius: 10px; font-size: 13px; font-weight: bold; }
+
+        /* PROFILE SECTION */
+        #profileSection { display: none; padding: 40px 5%; background: #fff; border-bottom: 1px solid #eee; text-align: center; }
+        .profile-header h2 { margin: 0; color: #222; }
+        .delete-btn { background: #ffdee2; color: #d32f2f; font-size: 11px; padding: 4px 8px; margin-top: 10px; }
 
         /* POPUPS */
         .popup { 
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: rgba(0,0,0,0.7); z-index: 2000; justify-content: center; align-items: center; 
+            background: rgba(0,0,0,0.7); z-index: 2000; justify-content: center; align-items: center; backdrop-filter: blur(4px);
         }
-        .popup-box { 
-            background: #fff; padding: 30px; border-radius: 20px; width: 90%; max-width: 380px; 
-            position: relative; text-align: center;
-        }
-        .popup-box input, .popup-box select { 
-            width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; 
-            border-radius: 10px; box-sizing: border-box; 
-        }
-        .google-btn { 
-            background: #fff; color: #444; border: 1px solid #ddd; 
-            width: 100%; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 10px;
-        }
+        .popup-box { background: #fff; padding: 35px; border-radius: 25px; width: 90%; max-width: 400px; text-align: center; }
+        .popup-box input, .popup-box select { width: 100%; padding: 14px; margin: 10px 0; border: 1px solid #ddd; border-radius: 12px; box-sizing: border-box; font-size: 15px; }
+        .google-btn { background: #fff; color: #444; border: 1px solid #ddd; width: 100%; margin-top: 15px; display: flex; align-items: center; justify-content: center; gap: 10px; height: 45px; }
 
-        /* MOBILE OPTIMIZATION */
+        /* MOBILE FIXES */
         @media (max-width: 600px) {
             header { padding: 10px 15px; }
-            .logo { font-size: 18px; }
-            .products-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; padding: 10px; }
-            .card img { height: 140px; }
-            #mainSearch { width: 90%; }
+            .logo { font-size: 20px; }
+            .products-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 12px; }
+            .card img { height: 150px; }
+            .search-box { width: 90%; font-size: 16px; }
+            .nav-actions button { padding: 6px 12px; font-size: 12px; }
         }
     </style>
 </head>
 <body>
 
 <header>
-    <div class="logo">Findly 🚀</div>
+    <a href="#" class="logo" onclick="toggleView('home')">Findly 🚀</a>
     <div class="nav-actions">
         <button id="navLogin" onclick="showPopup('loginPopup')">Login</button>
         <button id="navSignup" class="btn-outline" onclick="showPopup('signupPopup')">Signup</button>
-        <button id="navAdd" style="display:none;" onclick="showPopup('addPopup')">+ Add</button>
-        <button id="navLogout" style="display:none;" class="btn-outline" onclick="handleLogout()">Logout</button>
+        
+        <div id="userMenu" style="display:none; display:flex; gap:10px;">
+            <button onclick="toggleView('profile')">My Profile</button>
+            <button onclick="showPopup('addPopup')">+ Add</button>
+            <button class="btn-outline" onclick="handleLogout()">Logout</button>
+        </div>
     </div>
 </header>
 
-<div class="hero">
-    <div class="search-container">
-        <input type="text" id="mainSearch" placeholder="Search trending products..." oninput="runSearch()">
-    </div>
-    <div class="categories" id="catList">
-        <div class="cat-btn active" onclick="runFilter('All')">All</div>
-        <div class="cat-btn" onclick="runFilter('Tech')">Tech</div>
-        <div class="cat-btn" onclick="runFilter('Fashion')">Fashion</div>
-        <div class="cat-btn" onclick="runFilter('Home')">Home</div>
+<div id="profileSection">
+    <div class="profile-header">
+        <h2 id="welcomeText">Your Trending Posts</h2>
+        <p id="userEmailLabel" style="color:#888; margin-bottom: 20px;"></p>
+        <button onclick="toggleView('home')" class="btn-outline">Back to Feed</button>
     </div>
 </div>
 
-<div class="products-grid" id="displayArea"></div>
+<div id="homeSection">
+    <div class="hero">
+        <input type="text" id="mainSearch" class="search-box" placeholder="Search products..." oninput="runSearch()">
+        <div class="categories">
+            <div class="cat-btn active" onclick="runFilter('All')">All</div>
+            <div class="cat-btn" onclick="runFilter('Tech')">Tech</div>
+            <div class="cat-btn" onclick="runFilter('Fashion')">Fashion</div>
+            <div class="cat-btn" onclick="runFilter('Home')">Home</div>
+        </div>
+    </div>
+    <div class="products-grid" id="displayArea"></div>
+</div>
 
 <div class="popup" id="loginPopup">
     <div class="popup-box">
-        <h3>Sign in to Findly</h3>
-        <input type="email" id="loginEmail" placeholder="Email">
-        <input type="password" id="loginPass" placeholder="Password">
+        <h3>Welcome Back</h3>
+        <input type="email" id="lEmail" placeholder="Email">
+        <input type="password" id="lPass" placeholder="Password">
         <button style="width:100%" onclick="emailLogin()">Login</button>
-        <hr><p>OR</p>
         <button class="google-btn" onclick="googleAuth()">
             <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/action/google.svg" width="18"> Sign in with Google
         </button>
-        <br><br><button class="btn-outline" onclick="closeAll()">Close</button>
+        <p onclick="closeAll()" style="margin-top:20px; cursor:pointer; font-size:13px; color:#888;">Cancel</p>
     </div>
 </div>
 
 <div class="popup" id="signupPopup">
     <div class="popup-box">
-        <h3>Create Account</h3>
-        <input type="text" id="regName" placeholder="Full Name">
-        <input type="email" id="regEmail" placeholder="Email">
-        <input type="password" id="regPass" placeholder="Password">
-        <button style="width:100%" onclick="emailSignup()">Sign Up</button>
-        <hr><p>OR</p>
+        <h3>Join the Community</h3>
+        <input type="email" id="sEmail" placeholder="Email">
+        <input type="password" id="sPass" placeholder="Password">
+        <button style="width:100%" onclick="emailSignup()">Create Account</button>
         <button class="google-btn" onclick="googleAuth()">
             <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/action/google.svg" width="18"> Sign up with Google
         </button>
-        <br><br><button class="btn-outline" onclick="closeAll()">Close</button>
+        <p onclick="closeAll()" style="margin-top:20px; cursor:pointer; font-size:13px; color:#888;">Cancel</p>
     </div>
 </div>
 
 <div class="popup" id="addPopup">
     <div class="popup-box">
-        <h3>Share New Product</h3>
+        <h3>Post a Product</h3>
         <input type="text" id="p_img" placeholder="Image URL">
-        <input type="text" id="p_title" placeholder="Product Title">
-        <input type="text" id="p_link" placeholder="Buy Link">
+        <input type="text" id="p_title" placeholder="Title">
+        <input type="text" id="p_link" placeholder="Affiliate/Buy Link">
         <select id="p_cat">
             <option>Tech</option>
             <option>Fashion</option>
             <option>Home</option>
         </select>
-        <button style="width:100%" onclick="submitProduct()">Post Now</button>
-        <br><br><button class="btn-outline" onclick="closeAll()">Close</button>
+        <button style="width:100%" onclick="submitProduct()">Share Product</button>
+        <p onclick="closeAll()" style="margin-top:20px; cursor:pointer; font-size:13px; color:#888;">Cancel</p>
     </div>
 </div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import { getFirestore, collection, addDoc, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, getDocs, query, orderBy, updateDoc, doc, increment, deleteDoc, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyAoTFkBa7_LvMCa2JR_nqlxSg6H82sb9rI",
@@ -174,61 +185,82 @@
     const db = getFirestore(app);
 
     let masterData = [];
+    let currentView = 'home';
 
-    // Global Functions for Buttons
+    // NAVIGATION
     window.showPopup = (id) => document.getElementById(id).style.display = 'flex';
     window.closeAll = () => document.querySelectorAll('.popup').forEach(p => p.style.display = 'none');
+    
+    window.toggleView = (view) => {
+        currentView = view;
+        document.getElementById('homeSection').style.display = view === 'home' ? 'block' : 'none';
+        document.getElementById('profileSection').style.display = view === 'profile' ? 'block' : 'none';
+        loadItems();
+    };
 
-    // Auth Change
+    // AUTH ACTIONS
     onAuthStateChanged(auth, (user) => {
         const isUser = !!user;
         document.getElementById('navLogin').style.display = isUser ? 'none' : 'block';
         document.getElementById('navSignup').style.display = isUser ? 'none' : 'block';
-        document.getElementById('navAdd').style.display = isUser ? 'block' : 'none';
-        document.getElementById('navLogout').style.display = isUser ? 'block' : 'none';
+        document.getElementById('userMenu').style.display = isUser ? 'flex' : 'none';
+        if(user) {
+            document.getElementById('userEmailLabel').innerText = user.email;
+        }
     });
 
-    // Google Login/Signup Logic
     window.googleAuth = async () => {
-        try {
-            const provider = new GoogleAuthProvider();
-            await signInWithPopup(auth, provider);
-            closeAll();
-        } catch (e) { alert(e.message); }
+        try { await signInWithPopup(auth, new GoogleAuthProvider()); closeAll(); } catch(e) { alert(e.message); }
     };
 
     window.emailLogin = async () => {
-        const email = document.getElementById('loginEmail').value;
-        const pass = document.getElementById('loginPass').value;
-        try { await signInWithEmailAndPassword(auth, email, pass); closeAll(); } catch(e) { alert(e.message); }
+        try { await signInWithEmailAndPassword(auth, lEmail.value, lPass.value); closeAll(); } catch(e) { alert(e.message); }
     };
 
     window.emailSignup = async () => {
-        const email = document.getElementById('regEmail').value;
-        const pass = document.getElementById('regPass').value;
-        try { await createUserWithEmailAndPassword(auth, email, pass); closeAll(); } catch(e) { alert(e.message); }
+        try { await createUserWithEmailAndPassword(auth, sEmail.value, sPass.value); closeAll(); } catch(e) { alert(e.message); }
     };
 
-    window.handleLogout = () => signOut(auth);
+    window.handleLogout = () => { signOut(auth); toggleView('home'); };
 
-    // Firestore Actions
+    // PRODUCT ACTIONS
     window.submitProduct = async () => {
-        const docData = {
-            img: document.getElementById('p_img').value,
-            title: document.getElementById('p_title').value,
-            link: document.getElementById('p_link').value,
-            category: document.getElementById('p_cat').value,
-            time: new Date()
+        if(!auth.currentUser) return alert("Login first!");
+        const data = {
+            img: p_img.value, title: p_title.value, link: p_link.value, category: p_cat.value,
+            uid: auth.currentUser.uid, likes: 0, trendScore: 50, time: new Date()
         };
-        await addDoc(collection(db, "products"), docData);
-        closeAll();
+        await addDoc(collection(db, "products"), data);
+        closeAll(); loadItems();
+    };
+
+    window.handleLike = async (id) => {
+        if(!auth.currentUser) return showPopup('loginPopup');
+        await updateDoc(doc(db, "products", id), { 
+            likes: increment(1), 
+            trendScore: increment(15) 
+        });
         loadItems();
     };
 
+    window.deleteItem = async (id) => {
+        if(confirm("Delete this product?")) {
+            await deleteDoc(doc(db, "products", id));
+            loadItems();
+        }
+    };
+
+    // DATA LOADING
     async function loadItems() {
-        const q = query(collection(db, "products"), orderBy("time", "desc"));
+        let q = query(collection(db, "products"), orderBy("time", "desc"));
+        
+        // If profile view, filter by current user UID
+        if(currentView === 'profile' && auth.currentUser) {
+            q = query(collection(db, "products"), where("uid", "==", auth.currentUser.uid));
+        }
+
         const snap = await getDocs(q);
-        masterData = snap.docs.map(d => d.data());
+        masterData = snap.docs.map(d => ({ id: d.id, ...d.data() }));
         render(masterData);
     }
 
@@ -236,18 +268,23 @@
         const area = document.getElementById('displayArea');
         area.innerHTML = list.map(p => `
             <div class="card">
-                <img src="${p.img || 'https://via.placeholder.com/200'}">
+                <div class="trend-badge">🔥 ${p.trendScore || 0}</div>
+                <img src="${p.img || 'https://via.placeholder.com/300'}" onerror="this.src='https://via.placeholder.com/300'">
                 <div class="card-info">
                     <b>${p.title}</b>
-                    <small>Category: ${p.category}</small>
-                    <a href="${p.link}" target="_blank" class="buy-link">View Product</a>
+                    <div class="card-footer">
+                        <button class="like-btn" onclick="handleLike('${p.id}')">❤️ ${p.likes || 0}</button>
+                        <a href="${p.link}" target="_blank" class="buy-btn">Get Deal</a>
+                    </div>
+                    ${currentView === 'profile' ? `<button class="delete-btn" onclick="deleteItem('${p.id}')">Remove</button>` : ''}
                 </div>
             </div>
         `).join('');
     }
 
+    // SEARCH & FILTER
     window.runSearch = () => {
-        const term = document.getElementById('mainSearch').value.toLowerCase();
+        const term = mainSearch.value.toLowerCase();
         render(masterData.filter(i => i.title.toLowerCase().includes(term)));
     };
 

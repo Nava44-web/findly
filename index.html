@@ -3,67 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Findly 🚀 | Trending in India</title>
+    <title>Findly 🚀 | Trending India</title>
     <style>
-        :root { --brand: #ff3d00; --bg: #f4f7f6; --card-shadow: 0 4px 12px rgba(0,0,0,0.08); }
-        body { margin: 0; font-family: 'Segoe UI', Arial, sans-serif; background: var(--bg); color: #333; }
+        :root { --brand: #ff3d00; --bg: #f4f7f6; --white: #ffffff; }
+        body { margin: 0; font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: #333; overflow-x: hidden; }
         
         /* HEADER */
         header { 
             display: flex; justify-content: space-between; align-items: center; 
-            padding: 10px 5%; background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            padding: 12px 5%; background: var(--white); box-shadow: 0 2px 10px rgba(0,0,0,0.05);
             position: sticky; top: 0; z-index: 1000;
         }
-        .logo { color: var(--brand); font-weight: 800; font-size: 24px; cursor: pointer; text-decoration: none; }
-        .nav-actions { display: flex; gap: 10px; align-items: center; }
+        .logo { color: var(--brand); font-weight: 800; font-size: 24px; cursor: pointer; }
         
         button { 
             background: var(--brand); color: white; border: none; 
-            padding: 8px 18px; border-radius: 25px; font-weight: 600; 
-            cursor: pointer; transition: 0.2s; font-size: 14px;
+            padding: 10px 20px; border-radius: 25px; font-weight: 600; 
+            cursor: pointer; transition: 0.3s; font-size: 14px;
         }
         .btn-outline { background: transparent; color: var(--brand); border: 2px solid var(--brand); }
 
-        /* SEARCH AREA */
-        .hero { text-align: center; padding: 30px 20px; }
+        /* HERO & SEARCH */
+        .hero { text-align: center; padding: 30px 20px; background: var(--white); margin-bottom: 20px; }
         .search-box { 
-            width: 100%; max-width: 500px; padding: 14px 25px; 
-            border-radius: 35px; border: 1px solid #ddd; 
-            outline: none; font-size: 16px; box-shadow: var(--card-shadow);
+            width: 100%; max-width: 500px; padding: 15px 25px; 
+            border-radius: 40px; border: 1px solid #ddd; 
+            outline: none; font-size: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);
             margin-bottom: 20px;
         }
 
-        .categories { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
-        .cat-btn { background: #fff; padding: 8px 18px; border-radius: 20px; cursor: pointer; border: 1px solid #eee; font-size: 13px; }
-        .cat-btn.active { background: var(--brand); color: #fff; border-color: var(--brand); }
+        .categories { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+        .cat-btn { background: #eee; padding: 8px 18px; border-radius: 20px; cursor: pointer; border: none; font-size: 13px; font-weight: 600; }
+        .cat-btn.active { background: var(--brand); color: white; }
 
         /* PRODUCT GRID */
         .grid { 
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); 
-            gap: 20px; padding: 10px 5% 50px 5%; 
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); 
+            gap: 25px; padding: 20px 5%; min-height: 400px;
         }
-        .card { background: #fff; border-radius: 15px; overflow: hidden; box-shadow: var(--card-shadow); position: relative; transition: 0.3s; }
+        .card { background: var(--white); border-radius: 20px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.05); position: relative; transition: 0.3s; display: flex; flex-direction: column; }
         .card:hover { transform: translateY(-5px); }
-        .card img { width: 100%; height: 180px; object-fit: contain; background: #fff; padding: 10px; box-sizing: border-box; }
-        .badge { position: absolute; top: 10px; left: 10px; background: #27ae60; color: #fff; padding: 3px 8px; border-radius: 5px; font-size: 11px; font-weight: bold; }
+        .card img { width: 100%; height: 200px; object-fit: contain; background: #fff; padding: 10px; }
+        .ai-score { position: absolute; top: 10px; right: 10px; background: rgba(255,255,255,0.9); padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 800; color: var(--brand); border: 1px solid #eee; }
         
-        .info { padding: 15px; }
-        .info b { font-size: 15px; display: block; margin-bottom: 8px; height: 36px; overflow: hidden; line-height: 1.2; }
-        .info span { color: #888; font-size: 12px; }
+        .info { padding: 15px; flex-grow: 1; }
+        .info b { font-size: 16px; display: block; margin-bottom: 5px; height: 40px; overflow: hidden; }
+        .info p { font-size: 12px; color: #666; margin: 5px 0 15px 0; height: 32px; overflow: hidden; }
         
-        .buy-now { 
+        .buy-btn { 
             display: block; background: var(--brand); color: white; 
-            text-align: center; padding: 10px; text-decoration: none; 
-            border-radius: 8px; margin-top: 12px; font-weight: bold; font-size: 14px;
+            text-align: center; padding: 12px; text-decoration: none; 
+            border-radius: 12px; font-weight: bold; font-size: 14px;
         }
 
         /* POPUPS */
-        .popup { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2000; justify-content: center; align-items: center; }
-        .pop-box { background: #fff; padding: 30px; border-radius: 20px; width: 90%; max-width: 350px; text-align: center; }
+        .popup { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 2000; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
+        .pop-box { background: var(--white); padding: 30px; border-radius: 25px; width: 90%; max-width: 400px; max-height: 90vh; overflow-y: auto; position: relative; }
+        .pop-box h3 { margin-top: 0; color: var(--brand); }
+        input, select, textarea { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 12px; box-sizing: border-box; font-family: inherit; }
+        .file-input-label { display: block; background: #f0f0f0; padding: 10px; border-radius: 10px; border: 2px dashed #ccc; cursor: pointer; font-size: 13px; margin: 10px 0; }
 
         @media (max-width: 600px) {
-            .grid { grid-template-columns: repeat(2, 1fr); gap: 10px; padding: 10px; }
-            .card img { height: 150px; }
+            .grid { grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 12px; }
+            .card img { height: 160px; }
+            .logo { font-size: 20px; }
         }
     </style>
 </head>
@@ -72,40 +75,57 @@
 <header>
     <div class="logo" onclick="location.reload()">Findly 🚀</div>
     <div class="nav-actions">
-        <button id="loginBtn" onclick="openPop('loginPop')">Login</button>
-        <button id="addBtn" style="display:none;" onclick="openPop('addPop')">+ Add</button>
+        <button id="loginBtn" onclick="togglePop('loginPop', true)">Login</button>
+        <button id="addBtn" style="display:none;" onclick="togglePop('addPop', true)">+ Add</button>
         <button id="logoutBtn" style="display:none;" class="btn-outline" onclick="logout()">Logout</button>
     </div>
 </header>
 
 <div class="hero">
-    <input type="text" id="q" class="search-box" placeholder="Search products in India..." oninput="search()">
-    <div class="categories">
-        <div class="cat-btn active" onclick="filter('All')">All</div>
-        <div class="cat-btn" onclick="filter('Tech')">Tech</div>
-        <div class="cat-btn" onclick="filter('Fashion')">Fashion</div>
-        <div class="cat-btn" onclick="filter('Home')">Home</div>
+    <input type="text" id="searchInput" class="search-box" placeholder="Search trending products in India..." oninput="runSearch()">
+    <div class="categories" id="catBar">
+        <button class="cat-btn active" onclick="filterBy('All')">All</button>
+        <button class="cat-btn" onclick="filterBy('Tech')">Tech</button>
+        <button class="cat-btn" onclick="filterBy('Fashion')">Fashion</button>
+        <button class="cat-btn" onclick="filterBy('Home')">Home</button>
     </div>
 </div>
 
-<div class="grid" id="productGrid"></div>
+<div class="grid" id="productGrid">
+    </div>
 
 <div class="popup" id="loginPop">
     <div class="pop-box">
-        <h3>Login to Findly</h3>
-        <button style="width:100%; background:#4285F4;" onclick="googleLogin()">Sign in with Google</button>
-        <p onclick="closePops()" style="margin-top:15px; cursor:pointer; color:#999;">Close</p>
+        <h3>Welcome to Findly</h3>
+        <p>Sign in with Google to start sharing products.</p>
+        <button style="width:100%; background:#4285F4; padding: 15px;" onclick="googleLogin()">Continue with Google</button>
+        <p onclick="togglePop('loginPop', false)" style="margin-top:20px; cursor:pointer; color:#999; font-size:13px;">Close</p>
     </div>
 </div>
 
 <div class="popup" id="addPop">
     <div class="pop-box">
-        <h3>Post Trending Product</h3>
-        <input style="width:100%; padding:10px; margin:5px 0;" id="t" placeholder="Product Name">
-        <input style="width:100%; padding:10px; margin:5px 0;" id="i" placeholder="Image URL">
-        <input style="width:100%; padding:10px; margin:5px 0;" id="l" placeholder="Amazon/Flipkart Link">
-        <button style="width:100%; margin-top:10px;" onclick="post()">Post Now</button>
-        <p onclick="closePops()" style="margin-top:10px; cursor:pointer; color:#999;">Cancel</p>
+        <h3>Add Trending Product</h3>
+        <input id="p_name" placeholder="Product Name (e.g. boAt Nirvana)">
+        <textarea id="p_desc" placeholder="Brief Description" rows="2"></textarea>
+        
+        <label class="file-input-label">
+            📷 Upload from Gallery
+            <input type="file" id="p_file" accept="image/*" style="display:none;" onchange="handleFile(this)">
+        </label>
+        <p style="font-size: 11px; color: #888; margin: 0;">-- OR --</p>
+        <input id="p_url" placeholder="Paste Image URL">
+        
+        <input id="p_link" placeholder="Affiliate / Store Link">
+        
+        <select id="p_cat">
+            <option value="Tech">Tech</option>
+            <option value="Fashion">Fashion</option>
+            <option value="Home">Home</option>
+        </select>
+
+        <button id="submitBtn" style="width:100%; margin-top:15px;" onclick="postProduct()">Post Product</button>
+        <p onclick="togglePop('addPop', false)" style="margin-top:15px; cursor:pointer; color:#999; font-size:12px;">Cancel</p>
     </div>
 </div>
 
@@ -114,7 +134,6 @@
     import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
     import { getFirestore, collection, addDoc, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-    // YOUR API KEY CONNECTED
     const firebaseConfig = {
         apiKey: "AIzaSyAoTFkBa7_LvMCa2JR_nqlxSg6H82sb9rI",
         authDomain: "findly-app-8bdf6.firebaseapp.com",
@@ -128,81 +147,117 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    let items = [];
+    let masterItems = [];
+    let uploadedImageBase64 = "";
 
-    // INDIA-SPECIFIC DATA (TOP 50 CATEGORIES)
-    const indiaTrending = [
-        { name: "OnePlus Nord CE 4 5G", cat: "Tech", img: "https://m.media-amazon.com/images/I/61vU9vT7S9L._SX679_.jpg", link: "https://www.amazon.in/dp/B0CX59FSR5" },
-        { name: "boAt Rockerz 255 Pro+", cat: "Tech", img: "https://m.media-amazon.com/images/I/51atYp7KxSL._SX679_.jpg", link: "https://www.amazon.in/dp/B08TV2P1N8" },
-        { name: "Samsung Galaxy M35 5G", cat: "Tech", img: "https://m.media-amazon.com/images/I/81S8A68LInL._SX679_.jpg", link: "https://www.amazon.in/dp/B0D7B2D2G6" },
-        { name: "Noise Pulse 2 Max Smartwatch", cat: "Tech", img: "https://m.media-amazon.com/images/I/61S9aVnRZDL._SX679_.jpg", link: "https://www.amazon.in/dp/B0B5L6L69G" },
-        { name: "Nike Men's Revolution 7 Shoes", cat: "Fashion", img: "https://m.media-amazon.com/images/I/51XvVv5+FGL._SY695_.jpg", link: "https://www.flipkart.com" },
-        { name: "Pigeon Amaze Plus Electric Kettle", cat: "Home", img: "https://m.media-amazon.com/images/I/51DyS70N88L._SX679_.jpg", link: "https://www.amazon.in/dp/B07WMS7TWB" },
-        { name: "Prestige Iris Mixer Grinder", cat: "Home", img: "https://m.media-amazon.com/images/I/51+Z4Z3S+FL._SX679_.jpg", link: "https://www.amazon.in/dp/B01NBKTPTS" },
-        { name: "Levi's Men's Slim Fit Jeans", cat: "Fashion", img: "https://m.media-amazon.com/images/I/61I2Mv0KxXL._AC_UX679_.jpg", link: "https://www.amazon.in/dp/B0018OR12K" },
-        { name: "Echo Dot (5th Gen) Alexa", cat: "Tech", img: "https://m.media-amazon.com/images/I/61MB77UuJCL._SX679_.jpg", link: "https://www.amazon.in/dp/B09B8VGBCZ" },
-        { name: "boAt Bassheads 100 Earphones", cat: "Tech", img: "https://m.media-amazon.com/images/I/31S1pZp6nGL.jpg", link: "https://www.amazon.in/dp/B071Z8M4KX" },
-        { name: "Fire-Boltt Phoenix Smartwatch", cat: "Tech", img: "https://m.media-amazon.com/images/I/610oB95vYpL._SX679_.jpg", link: "https://www.amazon.in/dp/B0B3RPTX2V" },
-        { name: "Philips Beard Trimmer BT3203", cat: "Fashion", img: "https://m.media-amazon.com/images/I/61kM2yG6fFL._SX679_.jpg", link: "https://www.amazon.in/dp/B07D1K9NQC" },
-        { name: "MI Power Bank 3i 20000mAh", cat: "Tech", img: "https://m.media-amazon.com/images/I/71lVwl3q-kL._SX679_.jpg", link: "https://www.amazon.in/dp/B08HVL8QN3" },
-        { name: "Cotton Printed Saree (Ethnic)", cat: "Fashion", img: "https://m.media-amazon.com/images/I/91M14E69LXL._AC_SL1500_.jpg", link: "https://www.flipkart.com" },
-        { name: "Redmi Pad SE Tablet", cat: "Tech", img: "https://m.media-amazon.com/images/I/61+9m77pGTL._SX679_.jpg", link: "https://www.amazon.in" }
-        // ... (The script treats this as the core India collection)
-    ];
-
+    // AUTH LISTENER
     onAuthStateChanged(auth, (user) => {
-        loginBtn.style.display = user ? "none" : "block";
-        addBtn.style.display = user ? "block" : "none";
-        logoutBtn.style.display = user ? "block" : "none";
+        document.getElementById('loginBtn').style.display = user ? "none" : "block";
+        document.getElementById('addBtn').style.display = user ? "block" : "none";
+        document.getElementById('logoutBtn').style.display = user ? "block" : "none";
     });
 
-    window.googleLogin = async () => { await signInWithPopup(auth, new GoogleAuthProvider()); closePops(); };
+    window.googleLogin = async () => { try { await signInWithPopup(auth, new GoogleAuthProvider()); togglePop('loginPop', false); } catch(e){alert(e.message)} };
     window.logout = () => signOut(auth);
 
-    window.post = async () => {
-        await addDoc(collection(db, "products"), { 
-            name: t.value, img: i.value, link: l.value, cat: "Tech", time: new Date() 
-        });
-        closePops(); load();
+    // IMAGE FILE HANDLER
+    window.handleFile = (input) => {
+        const file = input.files[0];
+        const reader = new FileReader();
+        reader.onloadend = () => { 
+            uploadedImageBase64 = reader.result;
+            document.querySelector('.file-input-label').innerText = "✅ Image Selected";
+        };
+        if(file) reader.readAsDataURL(file);
     };
 
-    async function load() {
-        const snap = await getDocs(query(collection(db, "products"), orderBy("time", "desc")));
-        const fbData = snap.docs.map(d => d.data());
-        items = [...fbData, ...indiaTrending];
-        render(items);
+    // POST PRODUCT
+    window.postProduct = async () => {
+        const name = document.getElementById('p_name').value;
+        const desc = document.getElementById('p_desc').value;
+        const link = document.getElementById('p_link').value;
+        const cat = document.getElementById('p_cat').value;
+        const imgUrl = document.getElementById('p_url').value;
+        const finalImg = uploadedImageBase64 || imgUrl;
+
+        if(!name || !link || !finalImg) return alert("Please fill all fields and add an image!");
+
+        const btn = document.getElementById('submitBtn');
+        btn.innerText = "Posting...";
+        btn.disabled = true;
+
+        // AI Trend Score Logic (Simulated)
+        const aiScore = Math.floor(Math.random() * 300) + 600 + (name.length * 2);
+
+        try {
+            await addDoc(collection(db, "products"), {
+                name, desc, link, cat, 
+                img: finalImg, 
+                trend: aiScore,
+                time: new Date()
+            });
+            
+            // Reset Form
+            document.getElementById('p_name').value = "";
+            document.getElementById('p_desc').value = "";
+            document.getElementById('p_url').value = "";
+            uploadedImageBase64 = "";
+            document.querySelector('.file-input-label').innerText = "📷 Upload from Gallery";
+            
+            togglePop('addPop', false);
+            btn.innerText = "Post Product";
+            btn.disabled = false;
+            loadProducts(); // Refresh grid without full reload
+        } catch(e) { alert(e.message); btn.disabled = false; }
+    };
+
+    // LOAD DATA
+    async function loadProducts() {
+        const q = query(collection(db, "products"), orderBy("time", "desc"));
+        const snap = await getDocs(q);
+        masterItems = snap.docs.map(d => d.data());
+        
+        // If Firebase is empty, show a welcome message or default data
+        if(masterItems.length === 0) {
+            document.getElementById('productGrid').innerHTML = "<p style='grid-column: 1/-1; text-align:center;'>No products yet. Be the first to add one!</p>";
+            return;
+        }
+        render(masterItems);
     }
 
     function render(list) {
-        productGrid.innerHTML = list.map(p => `
+        const grid = document.getElementById('productGrid');
+        grid.innerHTML = list.map(p => `
             <div class="card">
-                <div class="badge">Trending India</div>
-                <img src="${p.img}" onerror="this.src='https://via.placeholder.com/200'">
+                <div class="ai-score">🤖 AI Trend: ${p.trend || 750}</div>
+                <img src="${p.img}" onerror="this.src='https://via.placeholder.com/300?text=No+Image'">
                 <div class="info">
                     <b>${p.name}</b>
-                    <span>${p.cat}</span>
-                    <a href="${p.link}" target="_blank" class="buy-now">Buy in India →</a>
+                    <p>${p.desc || "No description provided."}</p>
+                    <span>Category: ${p.cat}</span>
+                    <a href="${p.link}" target="_blank" class="buy-btn">View on Store →</a>
                 </div>
             </div>
         `).join('');
     }
 
-    window.search = () => {
-        const val = q.value.toLowerCase();
-        render(items.filter(i => i.name.toLowerCase().includes(val)));
+    // SEARCH & FILTER
+    window.runSearch = () => {
+        const val = document.getElementById('searchInput').value.toLowerCase();
+        render(masterItems.filter(i => i.name.toLowerCase().includes(val) || i.cat.toLowerCase().includes(val)));
     };
 
-    window.filter = (c) => {
+    window.filterBy = (cat) => {
         document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
         event.target.classList.add('active');
-        if(c === 'All') render(items);
-        else render(items.filter(i => i.cat === c));
+        if(cat === 'All') render(masterItems);
+        else render(masterItems.filter(i => i.cat === cat));
     };
 
-    window.openPop = (id) => document.getElementById(id).style.display = "flex";
-    window.closePops = () => document.querySelectorAll('.popup').forEach(p => p.style.display = "none");
+    // UI UTILS
+    window.togglePop = (id, show) => { document.getElementById(id).style.display = show ? "flex" : "none"; };
 
-    load();
+    loadProducts();
 </script>
 
 </body>

@@ -1,120 +1,30 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
-<title>Findly 🚀</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Findly 🚀</title>
 
 <style>
 body{margin:0;font-family:sans-serif;background:#f5f7fa;}
+header{display:flex;justify-content:space-between;padding:10px;background:#fff;}
+.logo{color:#ff3d00;font-weight:bold;}
+button{background:#ff3d00;color:white;border:none;padding:6px 12px;border-radius:20px;}
+.search{display:flex;justify-content:center;margin:15px;}
+.search input{width:60%;padding:10px;border-radius:20px;text-align:center;}
 
-/* HEADER */
-header{
-display:flex;
-justify-content:space-between;
-align-items:center;
-padding:12px 20px;
-background:white;
-box-shadow:0 2px 10px rgba(0,0,0,0.1);
-}
+.categories{display:flex;justify-content:center;gap:10px;}
+.cat{background:#ff3d00;color:white;padding:5px 10px;border-radius:10px;cursor:pointer;}
 
-.logo{font-weight:bold;font-size:20px;color:#ff3d00;}
+.products{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;padding:10px;}
+.card{background:white;padding:10px;border-radius:10px;}
+.btn{display:block;background:#ff3d00;color:white;text-align:center;padding:5px;border-radius:10px;margin-top:5px;}
 
-.actions{display:flex;gap:10px;}
-button{
-padding:6px 14px;
-border:none;
-border-radius:20px;
-background:#ff3d00;
-color:white;
-cursor:pointer;
-}
+.popup{display:none;position:fixed;width:100%;height:100%;background:rgba(0,0,0,0.5);top:0;justify-content:center;align-items:center;}
+.popup-content{background:white;padding:20px;border-radius:10px;width:300px;}
+input{width:100%;margin:5px 0;padding:8px;}
 
-/* CENTER SEARCH */
-.search-box{
-display:flex;
-justify-content:center;
-margin:20px;
-}
-.search-box input{
-width:60%;
-padding:12px;
-border-radius:25px;
-border:1px solid #ddd;
-text-align:center;
-}
-
-/* CATEGORY CENTER */
-.categories{
-display:flex;
-justify-content:center;
-gap:10px;
-margin-bottom:10px;
-}
-.cat{
-padding:6px 12px;
-background:#ff3d00;
-color:white;
-border-radius:15px;
-cursor:pointer;
-}
-
-/* PRODUCTS */
-.products{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-gap:15px;
-padding:15px;
-}
-
-.card{
-background:white;
-border-radius:12px;
-box-shadow:0 4px 10px rgba(0,0,0,0.1);
-overflow:hidden;
-}
-.card img{width:100%;height:150px;object-fit:cover;}
-.card-content{padding:10px;}
-
-.btn{
-display:block;
-background:#ff3d00;
-color:white;
-text-align:center;
-padding:8px;
-border-radius:20px;
-margin-top:8px;
-}
-
-/* POPUPS */
-.popup{
-display:none;
-position:fixed;
-top:0;left:0;
-width:100%;height:100%;
-background:rgba(0,0,0,0.5);
-justify-content:center;
-align-items:center;
-}
-
-.popup-content{
-background:white;
-padding:20px;
-border-radius:15px;
-width:300px;
-}
-
-input{
-width:100%;
-margin:8px 0;
-padding:10px;
-border-radius:10px;
-border:1px solid #ddd;
-}
-
-/* MOBILE */
 @media(max-width:600px){
-.search-box input{width:90%;}
+.search input{width:90%;}
 .products{grid-template-columns:repeat(2,1fr);}
 }
 </style>
@@ -124,25 +34,22 @@ border:1px solid #ddd;
 
 <header>
 <div class="logo">Findly 🚀</div>
-
-<div class="actions">
+<div>
 <button onclick="openLogin()">Login</button>
 <button onclick="openSignup()">Signup</button>
 <button onclick="logout()" id="logoutBtn" style="display:none;">Logout</button>
+<button onclick="openAdd()" id="addBtn" style="display:none;">+ Add</button>
 </div>
 </header>
 
-<!-- SEARCH CENTER -->
-<div class="search-box">
-<input id="search" placeholder="Search products..." oninput="searchProducts()">
+<div class="search">
+<input id="search" placeholder="Search..." oninput="searchProducts()">
 </div>
 
-<!-- CATEGORY -->
 <div class="categories">
 <div class="cat" onclick="filterCat('All')">All</div>
 <div class="cat" onclick="filterCat('Tech')">Tech</div>
 <div class="cat" onclick="filterCat('Fashion')">Fashion</div>
-<div class="cat" onclick="filterCat('Home')">Home</div>
 </div>
 
 <div class="products" id="products"></div>
@@ -154,7 +61,7 @@ border:1px solid #ddd;
 <input id="email" placeholder="Email">
 <input id="password" type="password" placeholder="Password">
 <button onclick="login()">Login</button>
-<button onclick="googleLogin()">Sign in with Google</button>
+<button onclick="googleLogin()">Login with Google</button>
 </div>
 </div>
 
@@ -168,6 +75,21 @@ border:1px solid #ddd;
 <input id="sPassword" type="password" placeholder="Password">
 <button onclick="signup()">Signup</button>
 <button onclick="googleLogin()">Signup with Google</button>
+</div>
+</div>
+
+<!-- ADD -->
+<div class="popup" id="addPopup">
+<div class="popup-content">
+<h3>Add Product</h3>
+<input id="img" placeholder="Image URL">
+<input id="title" placeholder="Title">
+<input id="link" placeholder="Buy Link">
+<select id="category">
+<option>Tech</option>
+<option>Fashion</option>
+</select>
+<button onclick="addProduct()">Add</button>
 </div>
 </div>
 
@@ -188,12 +110,13 @@ const db = getFirestore(app);
 
 let products=[];
 
-/* AUTH STATE */
+/* AUTH */
 onAuthStateChanged(auth,(user)=>{
 logoutBtn.style.display=user?"block":"none";
+addBtn.style.display=user?"block":"none";
 });
 
-/* GOOGLE LOGIN */
+/* GOOGLE */
 window.googleLogin=async()=>{
 const provider=new GoogleAuthProvider();
 await signInWithPopup(auth,provider);
@@ -214,7 +137,20 @@ signupPopup.style.display="none";
 /* LOGOUT */
 window.logout=()=>signOut(auth);
 
-/* LOAD PRODUCTS */
+/* ADD */
+window.addProduct=async()=>{
+await addDoc(collection(db,"products"),{
+img:img.value,
+title:title.value,
+link:link.value,
+category:category.value,
+likes:0
+});
+addPopup.style.display="none";
+loadProducts();
+};
+
+/* LOAD */
 async function loadProducts(){
 const snap=await getDocs(collection(db,"products"));
 products=snap.docs.map(d=>d.data());
@@ -227,29 +163,26 @@ list.forEach(p=>{
 productsDiv.innerHTML+=`
 <div class="card">
 <img src="${p.img||'https://via.placeholder.com/150'}">
-<div class="card-content">
 <b>${p.title}</b>
+<small>🔥 Score: ${Math.floor(Math.random()*100)}</small>
 <a href="${p.link}" target="_blank" class="btn">Buy</a>
-</div>
 </div>`;
 });
 }
 
-/* SEARCH */
 window.searchProducts=()=>{
 const val=search.value.toLowerCase();
 display(products.filter(p=>p.title.toLowerCase().includes(val)));
 };
 
-/* CATEGORY */
 window.filterCat=(cat)=>{
 if(cat==="All") display(products);
 else display(products.filter(p=>p.category===cat));
 };
 
-/* POPUPS */
 window.openLogin=()=>loginPopup.style.display="flex";
 window.openSignup=()=>signupPopup.style.display="flex";
+window.openAdd=()=>addPopup.style.display="flex";
 
 const productsDiv=document.getElementById("products");
 

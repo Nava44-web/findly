@@ -14,9 +14,10 @@
             padding: 12px 5%; background: var(--white); box-shadow: 0 2px 10px rgba(0,0,0,0.05);
             position: sticky; top: 0; z-index: 1000;
         }
-        .logo { color: var(--brand); font-weight: 800; font-size: 24px; cursor: pointer; }
-        
-        /* FIX: Side-by-Side Buttons */
+        .header-left { display: flex; align-items: center; gap: 15px; }
+        .logo { color: var(--brand); font-weight: 800; font-size: 24px; cursor: pointer; text-decoration: none; }
+        .user-name { font-weight: 600; color: #555; font-size: 14px; background: #eee; padding: 5px 12px; border-radius: 15px; display: none; }
+
         .nav-actions { display: flex; align-items: center; gap: 10px; }
         
         button { 
@@ -40,16 +41,13 @@
         .cat-btn.active { background: var(--brand); color: white; }
 
         /* GRID */
-        .grid { 
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); 
-            gap: 25px; padding: 20px 5%; 
-        }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 25px; padding: 20px 5%; }
         .card { background: var(--white); border-radius: 20px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.05); position: relative; transition: 0.3s; display: flex; flex-direction: column; }
         .card img { width: 100%; height: 200px; object-fit: contain; background: #fff; padding: 10px; }
-        .ai-score { position: absolute; top: 10px; right: 10px; background: rgba(255,255,255,0.9); padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 800; color: var(--brand); border: 1px solid #eee; }
         
         .info { padding: 15px; flex-grow: 1; }
-        .info b { font-size: 16px; display: block; margin-bottom: 5px; height: 40px; overflow: hidden; }
+        .info b { font-size: 16px; display: block; margin-bottom: 3px; height: 40px; overflow: hidden; }
+        .trend-score { font-size: 13px; font-weight: 800; color: var(--brand); margin-bottom: 8px; display: block; }
         .info p { font-size: 12px; color: #666; margin-bottom: 15px; height: 32px; overflow: hidden; }
         
         .buy-btn { display: block; background: var(--brand); color: white; text-align: center; padding: 10px; text-decoration: none; border-radius: 10px; font-weight: bold; font-size: 13px; }
@@ -62,7 +60,8 @@
 
         @media (max-width: 600px) {
             header { padding: 10px 15px; }
-            .nav-actions { gap: 5px; }
+            .logo { font-size: 18px; }
+            .user-name { display: none !important; } /* Hide name on tiny screens to save space */
             button { padding: 8px 12px; font-size: 11px; }
             .grid { grid-template-columns: repeat(2, 1fr); gap: 10px; padding: 10px; }
             .card img { height: 150px; }
@@ -72,7 +71,10 @@
 <body>
 
 <header>
-    <div class="logo" onclick="location.reload()">Findly 🚀</div>
+    <div class="header-left">
+        <div class="logo" onclick="location.reload()">Findly 🚀</div>
+        <div id="displayUserName" class="user-name"></div>
+    </div>
     <div class="nav-actions">
         <button id="showLogin" onclick="togglePop('loginPop', true)">Login</button>
         <button id="showSignup" class="btn-outline" onclick="togglePop('signupPop', true)">Signup</button>
@@ -97,9 +99,13 @@
 <div class="popup" id="signupPop">
     <div class="pop-box">
         <h3>Create Account</h3>
+        <div style="display: flex; gap: 10px;">
+            <input type="text" id="sFname" placeholder="First Name">
+            <input type="text" id="sLname" placeholder="Last Name">
+        </div>
         <input type="email" id="sEmail" placeholder="Email Address">
         <input type="password" id="sPass" placeholder="Password">
-        <button style="width:100%; margin-top:10px;" onclick="handleSignup()">Sign Up</button>
+        <button style="width:100%; margin-top:10px;" id="signupBtn" onclick="handleSignup()">Sign Up</button>
         <p onclick="togglePop('signupPop', false)" style="margin-top:15px; cursor:pointer; color:#999; font-size:12px;">Close</p>
     </div>
 </div>
@@ -139,7 +145,7 @@
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
     import { getFirestore, collection, addDoc, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     const firebaseConfig = {
@@ -161,21 +167,35 @@
     // AUTH OBSERVER
     onAuthStateChanged(auth, (user) => {
         const isUser = !!user;
+        const nameDisplay = document.getElementById('displayUserName');
+        
         document.getElementById('showLogin').style.display = isUser ? 'none' : 'block';
         document.getElementById('showSignup').style.display = isUser ? 'none' : 'block';
         document.getElementById('addBtn').style.display = isUser ? 'block' : 'none';
         document.getElementById('logoutBtn').style.display = isUser ? 'block' : 'none';
+
+        if(user && user.displayName) {
+            nameDisplay.innerText = "Hi, " + user.displayName.split(' ')[0]; // Shows First Name
+            nameDisplay.style.display = "block";
+        } else {
+            nameDisplay.style.display = "none";
+        }
     });
 
-    // AUTH ACTIONS
+    // SIGNUP
     window.handleSignup = async () => {
-        try { await createUserWithEmailAndPassword(auth, sEmail.value, sPass.value); togglePop('signupPop', false); }
-        catch(e) { alert("Error: " + e.message); }
+        const fname = sFname.value;
+        const lname = sLname.value;
+        try {
+            const userCredential = await createUserWithEmailAndPassword(auth, sEmail.value, sPass.value);
+            await updateProfile(userCredential.user, { displayName: `${fname} ${lname}` });
+            togglePop('signupPop', false);
+        } catch(e) { alert(e.message); }
     };
 
     window.handleLogin = async () => {
         try { await signInWithEmailAndPassword(auth, lEmail.value, lPass.value); togglePop('loginPop', false); }
-        catch(e) { alert("Invalid credentials"); }
+        catch(e) { alert("Login failed."); }
     };
 
     window.handleLogout = () => signOut(auth);
@@ -184,39 +204,34 @@
     document.getElementById('fileLabel').onclick = () => document.getElementById('p_file').click();
     window.handleFile = (input) => {
         const reader = new FileReader();
-        reader.onload = () => { galleryImg = reader.result; document.getElementById('fileLabel').innerText = "✅ Selected"; };
+        reader.onload = () => { galleryImg = reader.result; document.getElementById('fileLabel').innerText = "✅ Ready"; };
         if(input.files[0]) reader.readAsDataURL(input.files[0]);
     };
 
-    // PRODUCT SUBMISSION
+    // SUBMIT
     window.postProduct = async () => {
-        const name = p_name.value;
-        const link = p_link.value;
         const img = galleryImg || p_url.value;
-        
-        if(!name || !link || !img) return alert("Fill Name, Link and Image!");
+        if(!p_name.value || !p_link.value || !img) return alert("Missing info!");
 
         const btn = document.getElementById('postBtn');
         btn.innerText = "Posting...";
         btn.disabled = true;
 
-        const aiTrend = Math.floor(Math.random() * 200) + 700;
+        // NEW: AI Score out of 10
+        const aiScore = (Math.random() * (9.8 - 7.5) + 7.5).toFixed(1);
 
         try {
             await addDoc(collection(db, "products"), {
-                name, desc: p_desc.value, link, img, cat: p_cat.value, trend: aiTrend, time: new Date()
+                name: p_name.value, desc: p_desc.value, link: p_link.value, img, cat: p_cat.value, trend: aiScore, time: new Date()
             });
-            // Reset
             p_name.value = p_desc.value = p_url.value = p_link.value = galleryImg = "";
             document.getElementById('fileLabel').innerText = "📷 Gallery Upload (Optional)";
             togglePop('addPop', false);
-            btn.innerText = "Post Now";
-            btn.disabled = false;
+            btn.innerText = "Post Now"; btn.disabled = false;
             loadItems();
         } catch(e) { alert(e.message); btn.disabled = false; }
     };
 
-    // RENDER & LOAD
     async function loadItems() {
         const q = query(collection(db, "products"), orderBy("time", "desc"));
         const snap = await getDocs(q);
@@ -228,10 +243,10 @@
         const grid = document.getElementById('productGrid');
         grid.innerHTML = list.map(p => `
             <div class="card">
-                <div class="ai-score">🤖 AI Trend: ${p.trend}</div>
                 <img src="${p.img}" onerror="this.src='https://via.placeholder.com/300'">
                 <div class="info">
                     <b>${p.name}</b>
+                    <span class="trend-score">🔥 AI Trend: ${p.trend || '8.2'}/10</span>
                     <p>${p.desc || ""}</p>
                     <a href="${p.link}" target="_blank" class="buy-btn">View Deal →</a>
                 </div>
@@ -239,18 +254,13 @@
         `).join('');
     }
 
-    window.runSearch = () => {
-        const val = searchInput.value.toLowerCase();
-        render(masterList.filter(i => i.name.toLowerCase().includes(val)));
-    };
-
+    window.runSearch = () => render(masterList.filter(i => i.name.toLowerCase().includes(searchInput.value.toLowerCase())));
     window.filterBy = (cat) => {
         document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
         event.target.classList.add('active');
         if(cat === 'All') render(masterList);
         else render(masterList.filter(i => i.cat === cat));
     };
-
     window.togglePop = (id, show) => { document.getElementById(id).style.display = show ? "flex" : "none"; };
 
     loadItems();

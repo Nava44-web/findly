@@ -6,7 +6,7 @@
     <title>Findly Elite | Pro Product Discovery</title>
     
     <meta name="description" content="Findly: The elite visual discovery engine for trending AI-curated products.">
-<meta name="description" content="Findly Elite: The world's smartest AI-curated product discovery feed. Join our Pro community to find daily earning apps and viral tech trends.">
+    <meta name="description" content="Findly Elite: The world's smartest AI-curated product discovery feed. Join our Pro community to find daily earning apps and viral tech trends.">
     <meta name="keywords" content="Findly, AI Product Discovery, Passive Income Apps, Trending Tech, Viral Products 2026">
     <meta name="author" content="Findly Team">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
@@ -59,12 +59,12 @@
         input, select, textarea { width: 100%; padding: 14px; margin: 8px 0; background: #181818; border: 1px solid #333; color: white; border-radius: 12px; }
     </style>
     <script id="product-schema" type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "ItemList",
-  "name": "Findly Elite Trending Discoveries",
-  "itemListElement": []
-}
+    {
+      "@context": "https://schema.org",
+      "@type": "ItemList",
+      "name": "Findly Elite Trending Discoveries",
+      "itemListElement": []
+    }
     </script>
 </head>
 <body>
@@ -131,7 +131,7 @@
     import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
     import { getFirestore, collection, addDoc, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-    // YOUR API KEYS (LINKED TO PROJECT: findly-app-8bdf6)
+    // YOUR API KEYS
     const firebaseConfig = {
         apiKey: "AIzaSyAoTFkBa7_LvMCa2JR_nqlxSg6H82sb9rI",
         authDomain: "findly-app-8bdf6.firebaseapp.com",
@@ -169,7 +169,7 @@
         load(cat);
     };
 
-    // PRO SEARCH (TITLES + TAGS + DESC)
+    // PRO SEARCH
     document.getElementById('siteSearch').oninput = (e) => {
         const val = e.target.value.toLowerCase();
         document.querySelectorAll('.pin').forEach(p => {
@@ -178,7 +178,7 @@
         });
     };
 
-    // PUBLISH (STORES IN FIRESTORE CLOUD)
+    // PUBLISH
     document.getElementById('pubBtn').onclick = async () => {
         const btn = document.getElementById('pubBtn');
         const imgUrl = document.getElementById('pUrl').value;
@@ -199,15 +199,38 @@
         location.reload();
     };
 
-    // LOAD (RETRIEVES FROM FIRESTORE CLOUD)
+    // LOAD (RETRIEVES FROM FIRESTORE + UPDATES GOOGLE SEO)
     async function load(catFilter) {
         const q = query(collection(db, "discoveries"), orderBy("time", "desc"));
         const snap = await getDocs(q);
         const grid = document.getElementById('mainFeed');
         grid.innerHTML = '';
-        snap.forEach(doc => {
+
+        // SEO Schema Data Object
+        let schemaData = {
+            "@context": "https://schema.org",
+            "@type": "ItemList",
+            "name": "Findly Elite Trending Discoveries",
+            "itemListElement": []
+        };
+
+        snap.forEach((doc, index) => {
             const d = doc.data();
             if(catFilter !== 'All' && d.category !== catFilter) return;
+
+            // Push each product into the SEO List for Google
+            schemaData.itemListElement.push({
+                "@type": "ListItem",
+                "position": index + 1,
+                "item": {
+                    "@type": "Product",
+                    "name": d.name,
+                    "image": d.imageUrl,
+                    "description": d.desc || d.tags,
+                    "url": window.location.href
+                }
+            });
+
             grid.innerHTML += `
                 <div class="pin" data-search="${d.name} ${d.tags} ${d.desc} ${d.category}">
                     <img src="${d.imageUrl}">
@@ -223,6 +246,12 @@
                 </div>
             `;
         });
+
+        // Tell Google the Product Data is ready
+        const schemaTag = document.getElementById('product-schema');
+        if(schemaTag) {
+            schemaTag.innerHTML = JSON.stringify(schemaData);
+        }
     }
 </script>
 </body>

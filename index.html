@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <title>Findly | AI-Powered Product Discovery</title>
-    <meta name="description" content="Findly is a curated gallery of trending products, gadgets, and fashion discovered by AI.">
+    <title>Findly Pro | AI Trend Discovery</title>
+    <meta name="description" content="Findly is a premium curated gallery of trending AI-discovered products and gadgets.">
     <meta name="google-site-verification" content="PASTE_YOUR_CODE_HERE" />
 
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
@@ -17,10 +17,15 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
         body { background: var(--dark); color: white; overflow-x: hidden; }
 
+        /* --- LOADING STATE (FIXES FLICKER) --- */
+        #loader { position: fixed; inset: 0; background: var(--dark); z-index: 10000; display: flex; align-items: center; justify-content: center; }
+        .spinner { width: 40px; height: 40px; border: 4px solid var(--glass); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
         /* --- THE GATEKEEPER --- */
         #authGate {
             position: fixed; inset: 0; background: var(--dark);
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            display: none; flex-direction: column; align-items: center; justify-content: center;
             z-index: 9999; text-align: center; padding: 20px;
         }
         .gate-logo { font-size: 50px; font-weight: 700; margin-bottom: 10px; }
@@ -33,16 +38,20 @@
 
         /* --- APP CONTENT --- */
         #mainApp { display: none; opacity: 0; transition: 0.5s; }
-        header { padding: 30px 5% 10px; background: #080808; position: sticky; top: 0; z-index: 1000; }
+        header { padding: 20px 5% 10px; background: rgba(8,8,8,0.9); backdrop-filter: blur(15px); position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid var(--glass); }
         
-        .search-bar {
-            width: 100%; max-width: 600px; padding: 12px 25px; border-radius: 50px;
-            background: #1a1a1a; border: 2px solid transparent; color: white; outline: none;
-            display: block; margin: 15px auto 0; transition: 0.3s;
-        }
-        .search-bar:focus { border-color: var(--primary); }
+        .nav-top { display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 15px; }
+        .user-pill { display: flex; align-items: center; gap: 10px; background: var(--glass); padding: 5px 15px; border-radius: 50px; border: 1px solid rgba(255,255,255,0.1); }
+        .user-pill span { font-size: 12px; font-weight: 700; color: var(--primary); }
 
-        .cat-scroll { display: flex; gap: 12px; padding: 15px 5%; overflow-x: auto; scrollbar-width: none; }
+        .search-bar {
+            width: 100%; max-width: 700px; padding: 14px 25px 14px 50px; border-radius: 50px;
+            background: #151515; border: 2px solid transparent; color: white; outline: none;
+            display: block; margin: 0 auto; transition: 0.3s; font-size: 15px;
+        }
+        .search-bar:focus { border-color: var(--primary); background: #1a1a1a; box-shadow: 0 0 20px rgba(255, 61, 0, 0.1); }
+
+        .cat-scroll { display: flex; gap: 10px; padding: 15px 5%; overflow-x: auto; scrollbar-width: none; }
         .cat-pill {
             padding: 8px 22px; border-radius: 50px; background: var(--glass);
             text-decoration: none; color: #777; font-size: 13px; font-weight: 600;
@@ -50,16 +59,17 @@
         }
         .cat-pill.active { color: white; border-color: var(--primary); background: rgba(255, 61, 0, 0.1); }
 
-        .masonry { column-count: 4; column-gap: 15px; padding: 10px 5% 50px; }
+        /* MASONRY FEED */
+        .masonry { column-count: 4; column-gap: 15px; padding: 10px 5% 50px; width: 100%; }
         @media (max-width: 1100px) { .masonry { column-count: 3; } }
         @media (max-width: 750px) { .masonry { column-count: 2; } }
 
         .p-card {
             break-inside: avoid; margin-bottom: 15px; background: #111; border-radius: 20px;
-            overflow: hidden; position: relative; border: 1px solid #1a1a1a; transition: 0.3s;
+            overflow: hidden; position: relative; border: 1px solid #1a1a1a; transition: 0.3s; cursor: pointer;
         }
-        .p-card:hover { transform: scale(1.03); border-color: var(--primary); }
-        .p-card img { width: 100%; display: block; }
+        .p-card:hover { transform: scale(1.02); border-color: var(--primary); }
+        .p-card img { width: 100%; display: block; border-radius: 20px; }
         
         .p-hover {
             position: absolute; inset: 0; background: rgba(0,0,0,0.85); opacity: 0;
@@ -67,7 +77,8 @@
         }
         .p-card:hover .p-hover { opacity: 1; }
 
-        .fab { position: fixed; bottom: 30px; right: 30px; background: var(--primary); width: 60px; height: 60px; border-radius: 50%; border: none; font-size: 35px; color: white; cursor: pointer; z-index: 500; }
+        /* MODALS & FAB */
+        .fab { position: fixed; bottom: 30px; right: 30px; background: var(--primary); width: 60px; height: 60px; border-radius: 50%; border: none; font-size: 35px; color: white; cursor: pointer; z-index: 500; box-shadow: 0 10px 25px rgba(255, 61, 0, 0.4); }
         #adminModal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 2000; align-items: center; justify-content: center; }
         .modal-body { background: #111; padding: 30px; border-radius: 25px; width: 95%; max-width: 450px; border: 1px solid var(--primary); overflow-y: auto; max-height: 90vh; }
         input, select, textarea { width: 100%; padding: 12px; margin: 8px 0; background: #1a1a1a; border: 1px solid #333; color: white; border-radius: 10px; }
@@ -75,42 +86,46 @@
 </head>
 <body>
 
+    <div id="loader"><div class="spinner"></div></div>
+
     <div id="authGate">
         <div class="gate-logo">Find<span>ly</span></div>
-        <p style="color:#666; margin-bottom:30px;">Login to discover trending AI-curated products.</p>
+        <p style="color:#666; margin-bottom:30px; max-width: 300px;">Unlock the world's most intelligent product discovery feed.</p>
         <button class="gate-btn" id="loginBtn">Continue with Google →</button>
     </div>
 
     <div id="mainApp">
         <header>
-            <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
+            <div class="nav-top">
                 <div style="font-size:24px; font-weight:700;">Find<span>ly</span></div>
-                <div id="uName" style="font-size:11px; color:var(--primary); font-weight:700;">MEMBERS ONLY</div>
+                <div class="user-pill">
+                    <span id="userName">GUEST PRO</span>
+                </div>
             </div>
-            <input type="text" class="search-bar" id="pSearch" placeholder="Search gadgets, home, lifestyle...">
+            <input type="text" class="search-bar" id="globalSearch" placeholder="Search product name, #hashtags, or keywords...">
         </header>
 
         <div class="cat-scroll" id="catBar">
-            <div class="cat-pill active" data-cat="All">All</div>
-            <div class="cat-pill" data-cat="Trending">🔥 Trending</div>
-            <div class="cat-pill" data-cat="Tech">💻 Tech</div>
-            <div class="cat-pill" data-cat="Fashion">👕 Fashion</div>
-            <div class="cat-pill" data-cat="Home">🏠 Home</div>
-            <div class="cat-pill" data-cat="Lifestyle">🌟 Lifestyle</div>
+            <div class="cat-pill active" onclick="filterCat('All', this)">All</div>
+            <div class="cat-pill" onclick="filterCat('Trending', this)">🔥 Trending</div>
+            <div class="cat-pill" onclick="filterCat('Tech', this)">💻 Tech</div>
+            <div class="cat-pill" onclick="filterCat('Fashion', this)">👕 Fashion</div>
+            <div class="cat-pill" onclick="filterCat('Home', this)">🏠 Home</div>
+            <div class="cat-pill" onclick="filterCat('Lifestyle', this)">🌟 Lifestyle</div>
         </div>
 
         <div class="masonry" id="pGrid"></div>
-        <button class="fab" id="openAdd">+</button>
+        <button class="fab" onclick="document.getElementById('adminModal').style.display='flex'">+</button>
     </div>
 
     <div id="adminModal">
         <div class="modal-body">
-            <h2 style="color:var(--primary); margin-bottom:10px;">New Discovery</h2>
+            <h2 style="color:var(--primary); margin-bottom:10px;">New Pro Discovery</h2>
             <input type="text" id="pName" placeholder="Product Title">
-            <textarea id="pDesc" placeholder="Description (SEO)" rows="2"></textarea>
-            <input type="text" id="pTags" placeholder="Hashtags (e.g. #tech #smartwatch)">
+            <textarea id="pDesc" placeholder="Why is this trending? (SEO Description)" rows="2"></textarea>
+            <input type="text" id="pTags" placeholder="Hashtags (e.g. #tech #smartwatch #amazon)">
             <input type="text" id="pLink" placeholder="Affiliate Link">
-            <input type="text" id="pUrl" placeholder="Image URL">
+            <input type="text" id="pUrl" placeholder="Image URL (Faster)">
             <input type="file" id="pFile" accept="image/*">
             <select id="pCat">
                 <option value="Trending">Trending</option>
@@ -119,9 +134,10 @@
                 <option value="Home">Home</option>
                 <option value="Lifestyle">Lifestyle</option>
             </select>
-            <input type="range" id="pScore" min="0" max="10" step="0.1" value="9.5">
-            <button id="saveBtn" style="width:100%; padding:15px; background:var(--primary); color:white; border:none; border-radius:12px; font-weight:700; margin-top:10px; cursor:pointer;">PUBLISH</button>
-            <button id="closeModal" style="width:100%; background:none; border:none; color:#444; margin-top:10px;">Cancel</button>
+            <label style="font-size:11px; color:#555;">Trend Score: <span id="sv" style="color:var(--primary)">9.5</span></label>
+            <input type="range" id="pScore" min="0" max="10" step="0.1" value="9.5" oninput="document.getElementById('sv').innerText=this.value">
+            <button id="saveBtn" style="width:100%; padding:15px; background:var(--primary); color:white; border:none; border-radius:12px; font-weight:700; margin-top:10px; cursor:pointer;">PUBLISH TO FEED</button>
+            <button onclick="document.getElementById('adminModal').style.display='none'" style="width:100%; background:none; border:none; color:#444; margin-top:10px;">Cancel</button>
         </div>
     </div>
 
@@ -146,41 +162,51 @@
     const storage = getStorage(app);
     const provider = new GoogleAuthProvider();
 
-    // AUTH GATING
-    document.getElementById('loginBtn').onclick = () => signInWithPopup(auth, provider);
-
+    // AUTH ENGINE (NO FLICKER)
     onAuthStateChanged(auth, user => {
+        document.getElementById('loader').style.display = 'none';
         if(user) {
             document.getElementById('authGate').style.display = 'none';
             document.getElementById('mainApp').style.display = 'block';
             setTimeout(() => { document.getElementById('mainApp').style.opacity = '1'; }, 100);
-            document.body.style.overflow = 'auto';
+            document.getElementById('userName').innerText = user.displayName.split(' ')[0].toUpperCase() + ' PRO';
             load('All');
+        } else {
+            document.getElementById('authGate').style.display = 'flex';
+            document.getElementById('mainApp').style.display = 'none';
         }
     });
 
-    // CATEGORY FILTERING
-    document.querySelectorAll('.cat-pill').forEach(pill => {
-        pill.onclick = () => {
-            document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active'));
-            pill.classList.add('active');
-            load(pill.getAttribute('data-cat'));
-        };
-    });
+    document.getElementById('loginBtn').onclick = () => signInWithPopup(auth, provider);
 
-    // ADMIN MODAL
-    document.getElementById('openAdd').onclick = () => document.getElementById('adminModal').style.display = 'flex';
-    document.getElementById('closeModal').onclick = () => document.getElementById('adminModal').style.display = 'none';
+    // DYNAMIC FILTERING
+    window.filterCat = (cat, el) => {
+        document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active'));
+        el.classList.add('active');
+        load(cat);
+    };
 
+    // SEARCH SEARCH (NAME + DESC + TAGS)
+    document.getElementById('globalSearch').oninput = (e) => {
+        const val = e.target.value.toLowerCase();
+        document.querySelectorAll('.p-card').forEach(card => {
+            const data = card.getAttribute('data-search').toLowerCase();
+            card.style.display = data.includes(val) ? 'block' : 'none';
+        });
+    };
+
+    // SAVE PRODUCT
     document.getElementById('saveBtn').onclick = async () => {
         const file = document.getElementById('pFile').files[0];
         const urlInput = document.getElementById('pUrl').value;
         const btn = document.getElementById('saveBtn');
-        btn.innerText = "Publishing...";
+        if(!document.getElementById('pName').value) return alert("Title required!");
+        
+        btn.innerText = "Publishing Pro...";
         let finalImg = urlInput;
 
         if(file) {
-            const imgRef = ref(storage, `findly/${Date.now()}_${file.name}`);
+            const imgRef = ref(storage, `pro-finds/${Date.now()}_${file.name}`);
             await uploadBytes(imgRef, file);
             finalImg = await getDownloadURL(imgRef);
         }
@@ -198,16 +224,7 @@
         location.reload();
     };
 
-    // SEARCH SEARCH
-    document.getElementById('pSearch').oninput = (e) => {
-        const val = e.target.value.toLowerCase();
-        document.querySelectorAll('.p-card').forEach(card => {
-            const content = card.getAttribute('data-search').toLowerCase();
-            card.style.display = content.includes(val) ? 'block' : 'none';
-        });
-    };
-
-    // LOAD GRID
+    // LOAD MASONRY
     async function load(catFilter) {
         const q = query(collection(db, "products"), orderBy("timestamp", "desc"));
         const snap = await getDocs(q);
@@ -218,16 +235,16 @@
             if(catFilter !== 'All' && p.category !== catFilter) return;
             
             grid.innerHTML += `
-                <div class="p-card" data-search="${p.name} ${p.tags} ${p.desc}">
+                <div class="p-card" data-search="${p.name} ${p.tags} ${p.desc} ${p.category}">
                     <img src="${p.imageUrl}">
                     <div class="p-hover">
                         <div>
-                            <span style="background:var(--primary); padding:2px 10px; border-radius:20px; font-size:10px; font-weight:800;">${p.trendScore} AI</span>
+                            <span style="background:var(--primary); padding:2px 10px; border-radius:20px; font-size:10px; font-weight:800;">${p.trendScore} AI SCORE</span>
                             <h3 style="font-size:14px; margin-top:10px;">${p.name}</h3>
-                            <p style="font-size:11px; color:#aaa; margin-top:5px;">${p.desc || ''}</p>
-                            <p style="font-size:10px; color:var(--primary); margin-top:5px;">${p.tags || ''}</p>
+                            <p style="font-size:11px; color:#ccc; margin-top:5px; height:32px; overflow:hidden;">${p.desc || ''}</p>
+                            <p style="font-size:10px; color:var(--primary); margin-top:5px; font-weight:700;">${p.tags || ''}</p>
                         </div>
-                        <a href="${p.link}" target="_blank" style="background:white; color:black; text-decoration:none; padding:12px; border-radius:12px; text-align:center; font-weight:700; font-size:12px;">Get Discovery →</a>
+                        <a href="${p.link}" target="_blank" style="background:white; color:black; text-decoration:none; padding:12px; border-radius:12px; text-align:center; font-weight:700; font-size:12px;">Get it Now →</a>
                     </div>
                 </div>
             `;

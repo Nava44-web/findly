@@ -6,38 +6,23 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-body{margin:0;font-family:sans-serif;background:#eef2f7;}
+body{margin:0;font-family:sans-serif;background:#f5f7fa;}
 
+/* HEADER */
 header{
 display:flex;
 justify-content:space-between;
 align-items:center;
-padding:15px;
+padding:12px 20px;
 background:white;
 box-shadow:0 2px 10px rgba(0,0,0,0.1);
-position:relative;
 }
 
-.logo{font-size:22px;font-weight:bold;color:#ff3d00;}
-
-nav{
-position:absolute;
-left:50%;
-transform:translateX(-50%);
-width:50%;
-}
-nav input{
-width:100%;
-padding:10px;
-border-radius:25px;
-border:1px solid #ddd;
-text-align:center;
-}
+.logo{font-weight:bold;font-size:20px;color:#ff3d00;}
 
 .actions{display:flex;gap:10px;}
-
 button{
-padding:8px 15px;
+padding:6px 14px;
 border:none;
 border-radius:20px;
 background:#ff3d00;
@@ -45,21 +30,36 @@ color:white;
 cursor:pointer;
 }
 
-/* CATEGORY */
+/* CENTER SEARCH */
+.search-box{
+display:flex;
+justify-content:center;
+margin:20px;
+}
+.search-box input{
+width:60%;
+padding:12px;
+border-radius:25px;
+border:1px solid #ddd;
+text-align:center;
+}
+
+/* CATEGORY CENTER */
 .categories{
 display:flex;
+justify-content:center;
 gap:10px;
-padding:10px;
-overflow:auto;
+margin-bottom:10px;
 }
 .cat{
 padding:6px 12px;
-background:#ddd;
+background:#ff3d00;
+color:white;
 border-radius:15px;
 cursor:pointer;
 }
 
-/* GRID */
+/* PRODUCTS */
 .products{
 display:grid;
 grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
@@ -70,10 +70,9 @@ padding:15px;
 .card{
 background:white;
 border-radius:12px;
-overflow:hidden;
 box-shadow:0 4px 10px rgba(0,0,0,0.1);
+overflow:hidden;
 }
-
 .card img{width:100%;height:150px;object-fit:cover;}
 .card-content{padding:10px;}
 
@@ -81,14 +80,13 @@ box-shadow:0 4px 10px rgba(0,0,0,0.1);
 display:block;
 background:#ff3d00;
 color:white;
-padding:8px;
 text-align:center;
+padding:8px;
 border-radius:20px;
 margin-top:8px;
 }
 
-.like{color:#ff3d00;cursor:pointer;margin-top:5px;}
-
+/* POPUPS */
 .popup{
 display:none;
 position:fixed;
@@ -106,7 +104,7 @@ border-radius:15px;
 width:300px;
 }
 
-input,select{
+input{
 width:100%;
 margin:8px 0;
 padding:10px;
@@ -114,9 +112,10 @@ border-radius:10px;
 border:1px solid #ddd;
 }
 
+/* MOBILE */
 @media(max-width:600px){
+.search-box input{width:90%;}
 .products{grid-template-columns:repeat(2,1fr);}
-nav{width:80%;}
 }
 </style>
 </head>
@@ -126,20 +125,19 @@ nav{width:80%;}
 <header>
 <div class="logo">Findly 🚀</div>
 
-<nav>
-<input id="search" placeholder="Search..." oninput="searchProducts()">
-</nav>
-
 <div class="actions">
-<span id="userText"></span>
-<button id="loginBtn" onclick="openLogin()">Login</button>
-<button id="signupBtn" onclick="openSignup()">Signup</button>
-<button id="googleBtn" onclick="googleLogin()">Google</button>
-<button id="logoutBtn" onclick="logout()" style="display:none;">Logout</button>
-<button id="addBtn" onclick="openAdd()" style="display:none;">+ Add</button>
+<button onclick="openLogin()">Login</button>
+<button onclick="openSignup()">Signup</button>
+<button onclick="logout()" id="logoutBtn" style="display:none;">Logout</button>
 </div>
 </header>
 
+<!-- SEARCH CENTER -->
+<div class="search-box">
+<input id="search" placeholder="Search products..." oninput="searchProducts()">
+</div>
+
+<!-- CATEGORY -->
 <div class="categories">
 <div class="cat" onclick="filterCat('All')">All</div>
 <div class="cat" onclick="filterCat('Tech')">Tech</div>
@@ -150,17 +148,18 @@ nav{width:80%;}
 <div class="products" id="products"></div>
 
 <!-- LOGIN -->
-<div class="popup" id="loginPopup" onclick="closePopup(event)">
+<div class="popup" id="loginPopup">
 <div class="popup-content">
 <h3>Login</h3>
 <input id="email" placeholder="Email">
 <input id="password" type="password" placeholder="Password">
 <button onclick="login()">Login</button>
+<button onclick="googleLogin()">Sign in with Google</button>
 </div>
 </div>
 
 <!-- SIGNUP -->
-<div class="popup" id="signupPopup" onclick="closePopup(event)">
+<div class="popup" id="signupPopup">
 <div class="popup-content">
 <h3>Signup</h3>
 <input id="fname" placeholder="First Name">
@@ -168,30 +167,14 @@ nav{width:80%;}
 <input id="sEmail" placeholder="Email">
 <input id="sPassword" type="password" placeholder="Password">
 <button onclick="signup()">Signup</button>
-</div>
-</div>
-
-<!-- ADD -->
-<div class="popup" id="addPopup">
-<div class="popup-content">
-<h3>Add Product</h3>
-<input id="img" placeholder="Image URL">
-<input id="title" placeholder="Title">
-<input id="desc" placeholder="Description">
-<input id="link" placeholder="Buy Link">
-<select id="category">
-<option>Tech</option>
-<option>Fashion</option>
-<option>Home</option>
-</select>
-<button onclick="addProduct()">Add</button>
+<button onclick="googleLogin()">Signup with Google</button>
 </div>
 </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { getFirestore, collection, addDoc, getDocs, updateDoc, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 const firebaseConfig = {
 apiKey: "AIzaSyAoTFkBa7_LvMCa2JR_nqlxSg6H82sb9rI",
@@ -204,20 +187,10 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 
 let products=[];
-let currentUser=null;
 
 /* AUTH STATE */
 onAuthStateChanged(auth,(user)=>{
-currentUser=user;
-
-loginBtn.style.display=user?"none":"block";
-signupBtn.style.display=user?"none":"block";
-googleBtn.style.display=user?"none":"block";
-
 logoutBtn.style.display=user?"block":"none";
-addBtn.style.display=user?"block":"none";
-
-userText.innerText=user?user.email:"";
 });
 
 /* GOOGLE LOGIN */
@@ -241,51 +214,26 @@ signupPopup.style.display="none";
 /* LOGOUT */
 window.logout=()=>signOut(auth);
 
-/* ADD PRODUCT */
-window.addProduct=async()=>{
-await addDoc(collection(db,"products"),{
-img:img.value,
-title:title.value,
-desc:desc.value,
-link:link.value,
-category:category.value,
-user:currentUser.email,
-likes:0
-});
-addPopup.style.display="none";
-loadProducts();
-};
-
-/* LOAD */
+/* LOAD PRODUCTS */
 async function loadProducts(){
 const snap=await getDocs(collection(db,"products"));
-products=snap.docs.map(d=>({...d.data(),id:d.id}));
+products=snap.docs.map(d=>d.data());
 display(products);
 }
 
-/* DISPLAY */
 function display(list){
-products.innerHTML="";
+productsDiv.innerHTML="";
 list.forEach(p=>{
-products.innerHTML+=`
+productsDiv.innerHTML+=`
 <div class="card">
 <img src="${p.img||'https://via.placeholder.com/150'}">
 <div class="card-content">
 <b>${p.title}</b>
-<p>${p.desc||""}</p>
-<small>${p.category}</small>
-<div class="like" onclick="likeProduct('${p.id}',${p.likes||0})">❤️ ${p.likes||0}</div>
 <a href="${p.link}" target="_blank" class="btn">Buy</a>
 </div>
 </div>`;
 });
 }
-
-/* LIKE */
-window.likeProduct=async(id,likes)=>{
-await updateDoc(doc(db,"products",id),{likes:likes+1});
-loadProducts();
-};
 
 /* SEARCH */
 window.searchProducts=()=>{
@@ -302,12 +250,9 @@ else display(products.filter(p=>p.category===cat));
 /* POPUPS */
 window.openLogin=()=>loginPopup.style.display="flex";
 window.openSignup=()=>signupPopup.style.display="flex";
-window.openAdd=()=>addPopup.style.display="flex";
-window.closePopup=(e)=>{
-if(e.target.classList.contains("popup")) e.target.style.display="none";
-};
 
-/* INIT */
+const productsDiv=document.getElementById("products");
+
 loadProducts();
 </script>
 

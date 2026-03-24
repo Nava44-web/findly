@@ -91,6 +91,7 @@
 
         <div class="categories">
             <div class="cat-pill active" onclick="filterData('All', this)">All Discovery</div>
+            <div class="cat-pill" style="border:1px solid gold;" onclick="filterByPrice(999, this)">💰 Under 999</div>
             <div class="cat-pill" onclick="filterData('Trending', this)">🔥 Trending</div>
             <div class="cat-pill" onclick="filterData('Tech', this)">💻 Technology</div>
             <div class="cat-pill" onclick="filterData('Fashion', this)">👕 Fashion</div>
@@ -106,13 +107,15 @@
         <div class="modal">
             <h2 style="color:var(--primary); margin-bottom:10px;">New Pro Discovery</h2>
             <input type="text" id="pTitle" placeholder="Discovery Name">
+            <input type="number" id="pPrice" placeholder="Product Price (e.g. 899)">
             <textarea id="pAbout" placeholder="Description (SEO Search Keywords)" rows="2"></textarea>
             <input type="text" id="pTags" placeholder="Hashtags (e.g. #tech #viral)">
             <input type="text" id="pLink" placeholder="Affiliate/Buy Link">
             <input type="text" id="pUrl" placeholder="Paste Image Link (Right-click image > Copy Image Address)">
             
             <select id="pCat">
-                <option value="Trending">Trending</option>
+                <option value="Trending">Trending (48h Deal)</option>
+                <option value="999">Under 999 (48h Deal)</option>
                 <option value="Tech">Tech</option>
                 <option value="Fashion">Fashion</option>
                 <option value="Home">Home</option>
@@ -169,6 +172,13 @@
         load(cat);
     };
 
+    // PRICE FILTERING
+    window.filterByPrice = (max, el) => {
+        document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active'));
+        el.classList.add('active');
+        load('999'); 
+    };
+
     // PRO SEARCH
     document.getElementById('siteSearch').oninput = (e) => {
         const val = e.target.value.toLowerCase();
@@ -183,11 +193,13 @@
         const btn = document.getElementById('pubBtn');
         const imgUrl = document.getElementById('pUrl').value;
         const title = document.getElementById('pTitle').value;
+        const priceValue = document.getElementById('pPrice').value;
         if(!imgUrl || !title) return alert("Title and Image URL are required!");
 
         btn.innerText = "Publishing Pro...";
         await addDoc(collection(db, "discoveries"), {
             name: title,
+            price: Number(priceValue) || 0,
             desc: document.getElementById('pAbout').value,
             tags: document.getElementById('pTags').value,
             link: document.getElementById('pLink').value,
@@ -199,14 +211,15 @@
         location.reload();
     };
 
-    // LOAD (RETRIEVES FROM FIRESTORE + UPDATES GOOGLE SEO)
+    // LOAD (RETRIEVES FROM FIRESTORE + UPDATES GOOGLE SEO + SMART DELETE LOGIC)
     async function load(catFilter) {
+        const now = Date.now();
+        const fortyEightHours = 48 * 60 * 60 * 1000;
         const q = query(collection(db, "discoveries"), orderBy("time", "desc"));
         const snap = await getDocs(q);
         const grid = document.getElementById('mainFeed');
         grid.innerHTML = '';
 
-        // SEO Schema Data Object
         let schemaData = {
             "@context": "https://schema.org",
             "@type": "ItemList",
@@ -216,9 +229,13 @@
 
         snap.forEach((doc, index) => {
             const d = doc.data();
+
+            // SMART DELETE LOGIC: Trending and 999 disappear after 48h
+            const isTemporary = (d.category === 'Trending' || d.category === '999');
+            if (isTemporary && (now - d.time > fortyEightHours)) return;
+
             if(catFilter !== 'All' && d.category !== catFilter) return;
 
-            // Push each product into the SEO List for Google
             schemaData.itemListElement.push({
                 "@type": "ListItem",
                 "position": index + 1,
@@ -236,7 +253,7 @@
                     <img src="${d.imageUrl}">
                     <div class="pin-overlay">
                         <div>
-                            <span style="background:var(--primary); padding:3px 12px; border-radius:30px; font-size:10px; font-weight:800;">${d.score} AI SCORE</span>
+                            <span style="background:var(--primary); padding:3px 12px; border-radius:30px; font-size:10px; font-weight:800;">₹${d.price || d.score} ${d.price ? '' : 'AI SCORE'}</span>
                             <h3 style="font-size:15px; margin-top:12px; color:white;">${d.name}</h3>
                             <p style="font-size:11px; color:#aaa; margin-top:6px; height:34px; overflow:hidden;">${d.desc || ''}</p>
                             <p style="font-size:10px; color:var(--primary); margin-top:6px; font-weight:700;">${d.tags || ''}</p>
@@ -247,7 +264,6 @@
             `;
         });
 
-        // Tell Google the Product Data is ready
         const schemaTag = document.getElementById('product-schema');
         if(schemaTag) {
             schemaTag.innerHTML = JSON.stringify(schemaData);

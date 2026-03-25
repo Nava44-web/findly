@@ -6,7 +6,6 @@
     <title>Findly Elite | Pro Product Discovery</title>
     
     <meta name="description" content="Findly: The elite visual discovery engine for trending AI-curated products.">
-    <meta name="description" content="Findly Elite: The world's smartest AI-curated product discovery feed. Join our Pro community to find daily earning apps and viral tech trends.">
     <meta name="keywords" content="Findly, AI Product Discovery, Passive Income Apps, Trending Tech, Viral Products 2026">
     <meta name="author" content="Findly Team">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
@@ -15,7 +14,7 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
         body { background: var(--dark); color: white; overflow-x: hidden; }
 
-        /* AUTH LOADER (Prevents Flicker) */
+        /* AUTH LOADER */
         #siteLoader { position: fixed; inset: 0; background: var(--dark); z-index: 10000; display: flex; align-items: center; justify-content: center; }
         .spin { width: 45px; height: 45px; border: 4px solid var(--glass); border-top-color: var(--primary); border-radius: 50%; animation: s 1s linear infinite; }
         @keyframes s { to { transform: rotate(360deg); } }
@@ -42,30 +41,21 @@
         .cat-pill.active { background: var(--primary); color: white; box-shadow: 0 5px 15px rgba(255, 61, 0, 0.3); }
 
         /* MASONRY FEED */
-        .feed { column-count: 4; column-gap: 15px; padding: 10px 5% 60px; }
+        .feed { column-count: 4; column-gap: 15px; padding: 10px 5% 60px; min-height: 400px; }
         @media (max-width: 1100px) { .feed { column-count: 3; } }
         @media (max-width: 750px) { .feed { column-count: 2; } }
 
-        .pin { break-inside: avoid; margin-bottom: 15px; background: #111; border-radius: 22px; overflow: hidden; position: relative; border: 1px solid #1a1a1a; transition: 0.4s; }
+        .pin { break-inside: avoid; margin-bottom: 15px; background: #111; border-radius: 22px; overflow: hidden; position: relative; border: 1px solid #1a1a1a; transition: 0.4s; cursor: pointer; }
         .pin:hover { transform: scale(1.02); border-color: var(--primary); }
-        .pin img { width: 100%; display: block; }
+        .pin img { width: 100%; display: block; min-height: 100px; background: #181818; }
         .pin-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.85); opacity: 0; transition: 0.3s; display: flex; flex-direction: column; justify-content: space-between; padding: 20px; }
         .pin:hover .pin-overlay { opacity: 1; }
 
-        /* ADMIN & FAB */
         .fab { position: fixed; bottom: 30px; right: 30px; background: var(--primary); width: 65px; height: 65px; border-radius: 50%; border: none; font-size: 35px; color: white; cursor: pointer; z-index: 500; box-shadow: 0 10px 30px rgba(255, 61, 0, 0.5); }
         #adminBox { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 2000; align-items: center; justify-content: center; padding: 20px; }
         .modal { background: #0f0f0f; padding: 30px; border-radius: 30px; width: 100%; max-width: 480px; border: 1px solid var(--primary); max-height: 90vh; overflow-y: auto; }
         input, select, textarea { width: 100%; padding: 14px; margin: 8px 0; background: #181818; border: 1px solid #333; color: white; border-radius: 12px; }
     </style>
-    <script id="product-schema" type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "ItemList",
-      "name": "Findly Elite Trending Discoveries",
-      "itemListElement": []
-    }
-    </script>
 </head>
 <body>
 
@@ -111,7 +101,7 @@
             <textarea id="pAbout" placeholder="Description (SEO Search Keywords)" rows="2"></textarea>
             <input type="text" id="pTags" placeholder="Hashtags (e.g. #tech #viral)">
             <input type="text" id="pLink" placeholder="Affiliate/Buy Link">
-            <input type="text" id="pUrl" placeholder="Paste Image Link (Right-click image > Copy Image Address)">
+            <input type="text" id="pUrl" placeholder="Paste Image Link">
             
             <select id="pCat">
                 <option value="Trending">Trending (48h Deal)</option>
@@ -132,7 +122,7 @@
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import { getFirestore, collection, addDoc, getDocs, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyAoTFkBa7_LvMCa2JR_nqlxSg6H82sb9rI",
@@ -178,7 +168,7 @@
     document.getElementById('siteSearch').oninput = (e) => {
         const val = e.target.value.toLowerCase();
         document.querySelectorAll('.pin').forEach(p => {
-            const searchData = p.getAttribute('data-search').toLowerCase();
+            const searchData = (p.getAttribute('data-search') || "").toLowerCase();
             p.style.display = searchData.includes(val) ? 'block' : 'none';
         });
     };
@@ -187,13 +177,12 @@
         const btn = document.getElementById('pubBtn');
         const imgUrl = document.getElementById('pUrl').value;
         const title = document.getElementById('pTitle').value;
-        const priceValue = document.getElementById('pPrice').value;
         if(!imgUrl || !title) return alert("Title and Image URL are required!");
 
         btn.innerText = "Publishing Pro...";
         await addDoc(collection(db, "discoveries"), {
             name: title,
-            price: Number(priceValue) || 0,
+            price: document.getElementById('pPrice').value || "0",
             desc: document.getElementById('pAbout').value,
             tags: document.getElementById('pTags').value,
             link: document.getElementById('pLink').value,
@@ -207,62 +196,51 @@
 
     async function load(catFilter) {
         const now = Date.now();
-        const fortyEightHours = 48 * 60 * 60 * 1000;
-        
-        // We try to get documents. If 'time' index isn't ready, products still show up.
-        let snap;
+        const grid = document.getElementById('mainFeed');
+        grid.innerHTML = '<p style="text-align:center; width:100%; grid-column: 1/-1; opacity:0.5;">Connecting to Findly Cloud...</p>';
+
         try {
             const q = query(collection(db, "discoveries"), orderBy("time", "desc"));
-            snap = await getDocs(q);
-        } catch (e) {
-            console.log("Sorting index not ready yet, loading unsorted.");
-            snap = await getDocs(collection(db, "discoveries"));
-        }
-        
-        const grid = document.getElementById('mainFeed');
-        grid.innerHTML = '';
+            const snap = await getDocs(q);
+            grid.innerHTML = '';
 
-        snap.forEach((doc) => {
-            const d = doc.data();
-
-            // Support both Python Uploads and Manual Uploads
-            const displayTitle = d.name || d.title || "Elite Discovery";
-            const displayImg = d.imageUrl || d.img || "";
-            const displayDesc = d.desc || d.description || "";
-            const displayTags = d.tags || d.hashtags || "";
-            const displayPrice = d.price || "Trending";
-            
-            // Handle Timestamp formats
-            let displayTime;
-            if (d.time) {
-                displayTime = d.time;
-            } else if (d.uploaded_at) {
-                displayTime = d.uploaded_at.toMillis ? d.uploaded_at.toMillis() : d.uploaded_at;
-            } else {
-                displayTime = now;
+            if (snap.empty) {
+                grid.innerHTML = '<p style="text-align:center; width:100%; grid-column: 1/-1; color:#555;">No products found in database yet. Run your upload script!</p>';
+                return;
             }
 
-            // SMART DELETE LOGIC: Trending and 999 disappear after 48h
-            const isTemporary = (d.category === 'Trending' || d.category === '999');
-            if (isTemporary && (now - displayTime > fortyEightHours)) return;
+            snap.forEach((doc) => {
+                const d = doc.data();
 
-            if(catFilter !== 'All' && d.category !== catFilter) return;
+                // UNIVERSAL MAPPING: Support both Python 'title/img' and Manual 'name/imageUrl'
+                const displayTitle = d.title || d.name || "Elite Discovery";
+                const displayImg = d.img || d.imageUrl || "";
+                const displayPrice = d.price || d.score || "Trending";
+                const displayDesc = d.description || d.desc || "";
+                const displayTags = d.hashtags || d.tags || "";
+                const displayLink = d.link || "#";
 
-            grid.innerHTML += `
-                <div class="pin" data-search="${displayTitle} ${displayTags} ${displayDesc} ${d.category}">
-                    <img src="${displayImg}" onerror="this.src='https://via.placeholder.com/300x400?text=Findly+Product'">
-                    <div class="pin-overlay">
-                        <div>
-                            <span style="background:var(--primary); padding:3px 12px; border-radius:30px; font-size:10px; font-weight:800;">₹${displayPrice}</span>
-                            <h3 style="font-size:15px; margin-top:12px; color:white;">${displayTitle}</h3>
-                            <p style="font-size:11px; color:#aaa; margin-top:6px; height:34px; overflow:hidden;">${displayDesc}</p>
-                            <p style="font-size:10px; color:var(--primary); margin-top:6px; font-weight:700;">${displayTags}</p>
+                if(catFilter !== 'All' && d.category !== catFilter) return;
+
+                grid.innerHTML += `
+                    <div class="pin" data-search="${displayTitle} ${displayTags} ${displayDesc}">
+                        <img src="${displayImg}" onerror="this.src='https://via.placeholder.com/300x400?text=Findly+Product'">
+                        <div class="pin-overlay">
+                            <div>
+                                <span style="background:var(--primary); padding:3px 12px; border-radius:30px; font-size:10px; font-weight:800;">₹${displayPrice}</span>
+                                <h3 style="font-size:15px; margin-top:12px; color:white;">${displayTitle}</h3>
+                                <p style="font-size:11px; color:#aaa; margin-top:6px; height:34px; overflow:hidden;">${displayDesc}</p>
+                                <p style="font-size:10px; color:var(--primary); margin-top:6px; font-weight:700;">${displayTags}</p>
+                            </div>
+                            <a href="${displayLink}" target="_blank" style="background:white; color:black; text-decoration:none; padding:12px; border-radius:14px; text-align:center; font-weight:700; font-size:12px;">Get Discovery →</a>
                         </div>
-                        <a href="${d.link}" target="_blank" style="background:white; color:black; text-decoration:none; padding:12px; border-radius:14px; text-align:center; font-weight:700; font-size:12px;">Get Discovery →</a>
                     </div>
-                </div>
-            `;
-        });
+                `;
+            });
+        } catch (e) {
+            console.error("Load error:", e);
+            grid.innerHTML = '<p style="color:red; text-align:center; width:100%;">Error loading products. Check Firebase Rules.</p>';
+        }
     }
 </script>
 </body>

@@ -132,9 +132,8 @@
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import { getFirestore, collection, addDoc, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, getDocs, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-    // YOUR API KEYS
     const firebaseConfig = {
         apiKey: "AIzaSyAoTFkBa7_LvMCa2JR_nqlxSg6H82sb9rI",
         authDomain: "findly-app-8bdf6.firebaseapp.com",
@@ -149,7 +148,6 @@
     const db = getFirestore(app);
     const provider = new GoogleAuthProvider();
 
-    // AUTH (NO FLICKER LOGIC)
     onAuthStateChanged(auth, user => {
         document.getElementById('siteLoader').style.display = 'none';
         if(user) {
@@ -165,21 +163,18 @@
 
     document.getElementById('loginBtn').onclick = () => signInWithPopup(auth, provider);
 
-    // DYNAMIC FILTERING
     window.filterData = (cat, el) => {
         document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active'));
         el.classList.add('active');
         load(cat);
     };
 
-    // PRICE FILTERING
     window.filterByPrice = (max, el) => {
         document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active'));
         el.classList.add('active');
         load('999'); 
     };
 
-    // PRO SEARCH
     document.getElementById('siteSearch').oninput = (e) => {
         const val = e.target.value.toLowerCase();
         document.querySelectorAll('.pin').forEach(p => {
@@ -188,7 +183,6 @@
         });
     };
 
-    // PUBLISH
     document.getElementById('pubBtn').onclick = async () => {
         const btn = document.getElementById('pubBtn');
         const imgUrl = document.getElementById('pUrl').value;
@@ -211,63 +205,64 @@
         location.reload();
     };
 
-    // LOAD (RETRIEVES FROM FIRESTORE + UPDATES GOOGLE SEO + SMART DELETE LOGIC)
     async function load(catFilter) {
         const now = Date.now();
         const fortyEightHours = 48 * 60 * 60 * 1000;
-        const q = query(collection(db, "discoveries"), orderBy("time", "desc"));
-        const snap = await getDocs(q);
+        
+        // We try to get documents. If 'time' index isn't ready, products still show up.
+        let snap;
+        try {
+            const q = query(collection(db, "discoveries"), orderBy("time", "desc"));
+            snap = await getDocs(q);
+        } catch (e) {
+            console.log("Sorting index not ready yet, loading unsorted.");
+            snap = await getDocs(collection(db, "discoveries"));
+        }
+        
         const grid = document.getElementById('mainFeed');
         grid.innerHTML = '';
 
-        let schemaData = {
-            "@context": "https://schema.org",
-            "@type": "ItemList",
-            "name": "Findly Elite Trending Discoveries",
-            "itemListElement": []
-        };
-
-        snap.forEach((doc, index) => {
+        snap.forEach((doc) => {
             const d = doc.data();
+
+            // Support both Python Uploads and Manual Uploads
+            const displayTitle = d.name || d.title || "Elite Discovery";
+            const displayImg = d.imageUrl || d.img || "";
+            const displayDesc = d.desc || d.description || "";
+            const displayTags = d.tags || d.hashtags || "";
+            const displayPrice = d.price || "Trending";
+            
+            // Handle Timestamp formats
+            let displayTime;
+            if (d.time) {
+                displayTime = d.time;
+            } else if (d.uploaded_at) {
+                displayTime = d.uploaded_at.toMillis ? d.uploaded_at.toMillis() : d.uploaded_at;
+            } else {
+                displayTime = now;
+            }
 
             // SMART DELETE LOGIC: Trending and 999 disappear after 48h
             const isTemporary = (d.category === 'Trending' || d.category === '999');
-            if (isTemporary && (now - d.time > fortyEightHours)) return;
+            if (isTemporary && (now - displayTime > fortyEightHours)) return;
 
             if(catFilter !== 'All' && d.category !== catFilter) return;
 
-            schemaData.itemListElement.push({
-                "@type": "ListItem",
-                "position": index + 1,
-                "item": {
-                    "@type": "Product",
-                    "name": d.name,
-                    "image": d.imageUrl,
-                    "description": d.desc || d.tags,
-                    "url": window.location.href
-                }
-            });
-
             grid.innerHTML += `
-                <div class="pin" data-search="${d.name} ${d.tags} ${d.desc} ${d.category}">
-                    <img src="${d.imageUrl}">
+                <div class="pin" data-search="${displayTitle} ${displayTags} ${displayDesc} ${d.category}">
+                    <img src="${displayImg}" onerror="this.src='https://via.placeholder.com/300x400?text=Findly+Product'">
                     <div class="pin-overlay">
                         <div>
-                            <span style="background:var(--primary); padding:3px 12px; border-radius:30px; font-size:10px; font-weight:800;">₹${d.price || d.score} ${d.price ? '' : 'AI SCORE'}</span>
-                            <h3 style="font-size:15px; margin-top:12px; color:white;">${d.name}</h3>
-                            <p style="font-size:11px; color:#aaa; margin-top:6px; height:34px; overflow:hidden;">${d.desc || ''}</p>
-                            <p style="font-size:10px; color:var(--primary); margin-top:6px; font-weight:700;">${d.tags || ''}</p>
+                            <span style="background:var(--primary); padding:3px 12px; border-radius:30px; font-size:10px; font-weight:800;">₹${displayPrice}</span>
+                            <h3 style="font-size:15px; margin-top:12px; color:white;">${displayTitle}</h3>
+                            <p style="font-size:11px; color:#aaa; margin-top:6px; height:34px; overflow:hidden;">${displayDesc}</p>
+                            <p style="font-size:10px; color:var(--primary); margin-top:6px; font-weight:700;">${displayTags}</p>
                         </div>
                         <a href="${d.link}" target="_blank" style="background:white; color:black; text-decoration:none; padding:12px; border-radius:14px; text-align:center; font-weight:700; font-size:12px;">Get Discovery →</a>
                     </div>
                 </div>
             `;
         });
-
-        const schemaTag = document.getElementById('product-schema');
-        if(schemaTag) {
-            schemaTag.innerHTML = JSON.stringify(schemaData);
-        }
     }
 </script>
 </body>

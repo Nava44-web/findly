@@ -48,8 +48,25 @@
         .pin { break-inside: avoid; margin-bottom: 15px; background: #111; border-radius: 22px; overflow: hidden; position: relative; border: 1px solid #1a1a1a; transition: 0.4s; cursor: pointer; }
         .pin:hover { transform: scale(1.02); border-color: var(--primary); }
         .pin img { width: 100%; display: block; min-height: 100px; background: #181818; }
+        
+        /* OVERLAY LOGIC FOR DESKTOP VS MOBILE */
         .pin-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.85); opacity: 0; transition: 0.3s; display: flex; flex-direction: column; justify-content: space-between; padding: 20px; }
-        .pin:hover .pin-overlay { opacity: 1; }
+        
+        /* Show on Hover (Desktop) */
+        @media (min-width: 768px) {
+            .pin:hover .pin-overlay { opacity: 1; }
+        }
+        
+        /* Show always or on Tap (Mobile) */
+        @media (max-width: 767px) {
+            .pin-overlay { 
+                position: relative; 
+                opacity: 1; 
+                background: #111; 
+                padding: 15px;
+                border-top: 1px solid #222;
+            }
+        }
 
         .fab { position: fixed; bottom: 30px; right: 30px; background: var(--primary); width: 65px; height: 65px; border-radius: 50%; border: none; font-size: 35px; color: white; cursor: pointer; z-index: 500; box-shadow: 0 10px 30px rgba(255, 61, 0, 0.5); }
         #adminBox { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 2000; align-items: center; justify-content: center; padding: 20px; }
@@ -197,7 +214,7 @@
     async function load(catFilter) {
         const now = Date.now();
         const grid = document.getElementById('mainFeed');
-        grid.innerHTML = '<p style="text-align:center; width:100%; grid-column: 1/-1; opacity:0.5;">Connecting to Findly Cloud...</p>';
+        grid.innerHTML = '<p style="text-align:center; width:100%; opacity:0.5;">Connecting to Findly Cloud...</p>';
 
         try {
             const q = query(collection(db, "discoveries"), orderBy("time", "desc"));
@@ -205,41 +222,39 @@
             grid.innerHTML = '';
 
             if (snap.empty) {
-                grid.innerHTML = '<p style="text-align:center; width:100%; grid-column: 1/-1; color:#555;">No products found in database yet. Run your upload script!</p>';
+                grid.innerHTML = '<p style="text-align:center; width:100%; color:#555;">No products found in database yet.</p>';
                 return;
             }
 
             snap.forEach((doc) => {
                 const d = doc.data();
-
-                // UNIVERSAL MAPPING: Support both Python 'title/img' and Manual 'name/imageUrl'
                 const displayTitle = d.title || d.name || "Elite Discovery";
                 const displayImg = d.img || d.imageUrl || "";
                 const displayPrice = d.price || d.score || "Trending";
-                const displayDesc = d.description || d.desc || "";
-                const displayTags = d.hashtags || d.tags || "";
+                const displayDesc = d.desc || d.description || "";
+                const displayTags = d.tags || d.hashtags || "";
                 const displayLink = d.link || "#";
 
                 if(catFilter !== 'All' && d.category !== catFilter) return;
 
                 grid.innerHTML += `
-                    <div class="pin" data-search="${displayTitle} ${displayTags} ${displayDesc}">
+                    <div class="pin" onclick="window.open('${displayLink}', '_blank')" data-search="${displayTitle} ${displayTags} ${displayDesc}">
                         <img src="${displayImg}" onerror="this.src='https://via.placeholder.com/300x400?text=Findly+Product'">
                         <div class="pin-overlay">
                             <div>
                                 <span style="background:var(--primary); padding:3px 12px; border-radius:30px; font-size:10px; font-weight:800;">₹${displayPrice}</span>
-                                <h3 style="font-size:15px; margin-top:12px; color:white;">${displayTitle}</h3>
-                                <p style="font-size:11px; color:#aaa; margin-top:6px; height:34px; overflow:hidden;">${displayDesc}</p>
-                                <p style="font-size:10px; color:var(--primary); margin-top:6px; font-weight:700;">${displayTags}</p>
+                                <h3 style="font-size:14px; margin-top:10px; color:white;">${displayTitle}</h3>
+                                <p style="font-size:11px; color:#aaa; margin-top:5px; height:34px; overflow:hidden;">${displayDesc}</p>
+                                <p style="font-size:10px; color:var(--primary); margin-top:5px; font-weight:700;">${displayTags}</p>
                             </div>
-                            <a href="${displayLink}" target="_blank" style="background:white; color:black; text-decoration:none; padding:12px; border-radius:14px; text-align:center; font-weight:700; font-size:12px;">Get Discovery →</a>
+                            <button style="background:white; color:black; border:none; padding:10px; border-radius:12px; text-align:center; font-weight:700; font-size:12px; margin-top:10px; width:100%;">Get Discovery →</button>
                         </div>
                     </div>
                 `;
             });
         } catch (e) {
             console.error("Load error:", e);
-            grid.innerHTML = '<p style="color:red; text-align:center; width:100%;">Error loading products. Check Firebase Rules.</p>';
+            grid.innerHTML = '<p style="color:red; text-align:center; width:100%;">Error loading products.</p>';
         }
     }
 </script>
